@@ -1,3 +1,6 @@
+# Root requirements.txt
+-r requirements/base.txt
+
 # CLI Dependencies
 click>=8.1.0
 rich>=13.0.0
