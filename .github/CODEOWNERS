@@ -1,0 +1,36 @@
+# This is the CODEOWNERS file for LLMGuardian
+# Each line specifies the owner(s) for files/directories
+# Order is important; the last matching pattern takes precedence
+
+# Default owners for everything in the repo
+# This ensures you have oversight over all changes
+*       @dewitt4
+
+# Core security components require your explicit review
+/src/security/       @dewitt4
+/src/validators/     @dewitt4
+/src/scanners/       @dewitt4
+/src/mitigation/     @dewitt4
+
+# Configuration and deployment files
+*.yml               @dewitt4
+*.yaml              @dewitt4
+Dockerfile          @dewitt4
+docker-compose.yml  @dewitt4
+
+# Security-critical files
+requirements.txt    @dewitt4
+setup.py           @dewitt4
+pyproject.toml     @dewitt4
+
+# Documentation can be reviewed by you
+/docs/             @dewitt4
+
+# Test files still require owner review due to security implications
+/tests/            @dewitt4
+
+# GitHub specific files
+/.github/          @dewitt4
+SECURITY.md        @dewitt4
+CONTRIBUTING.md    @dewitt4
+CODE_OF_CONDUCT.md @dewitt4
