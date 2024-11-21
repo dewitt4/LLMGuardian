@@ -1,5 +1,7 @@
 # LLMGuardian Prompt Injection Scanner
 
+**prompt_injection_scanner.py**
+
 ## Overview
 The Prompt Injection Scanner is a core security component of LLMGuardian, designed to detect and prevent various types of prompt injection attacks against LLM applications. Based on OWASP's LLM01:2025 guidelines, it provides comprehensive protection against both direct and indirect prompt injection attempts.
 
