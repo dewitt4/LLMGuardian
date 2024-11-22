@@ -5,6 +5,8 @@ Author: DeWitt Gibson https://www.linkedin.com/in/dewitt-gibson/
 
 **IN DEVELOPMENT NOT YET FUNCTIONALLY COMPLETE**
 
+**Please see the Projects and Issues tab above for completion roadmap**
+
 # Project Structure
 
 LLMGuardian follows a modular and secure architecture designed to provide comprehensive protection for LLM applications. Below is the detailed project structure with explanations for each component:
