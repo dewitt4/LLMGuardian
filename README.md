@@ -3,6 +3,8 @@ Comprehensive LLM protection toolset aligned to addressing OWASP vulnerabilities
 
 Author: DeWitt Gibson https://www.linkedin.com/in/dewitt-gibson/
 
+**IN DEVELOPMENT NOT YET FUNCTIONALLY COMPLETE**
+
 # Project Structure
 
 LLMGuardian follows a modular and secure architecture designed to provide comprehensive protection for LLM applications. Below is the detailed project structure with explanations for each component:
@@ -133,5 +135,3 @@ To start working with this structure:
 3. Install dependencies from the appropriate requirements file
 4. Run the test suite to ensure everything is working
 5. Follow the contribution guidelines for making changes
-
-For detailed setup instructions, see the Installation and Development sections below.
