@@ -3,7 +3,7 @@ Comprehensive LLM protection toolset aligned to addressing OWASP vulnerabilities
 
 Author: DeWitt Gibson https://www.linkedin.com/in/dewitt-gibson/
 
-**IN DEVELOPMENT NOT YET FUNCTIONALLY COMPLETE**
+**Full Documentaion and Usage Instructions: [DOCS](docs/README.md)**
 
 **Please see the Projects and Issues tab above for completion roadmap**
 
