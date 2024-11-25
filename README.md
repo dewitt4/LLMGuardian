@@ -65,8 +65,11 @@ LLMGuardian/
    - Threat detection
    - Anomaly monitoring
   
-**Vectors** ('src/llmguardian/vectors/')** 
-**Data** ('src/llmguardian/data/')**
+**Vectors ('src/llmguardian/vectors/')** 
+
+**Data ('src/llmguardian/data/')**
+
+**Agency ('src/llmguardian/agency/')**
 
 ### Core Components
 
