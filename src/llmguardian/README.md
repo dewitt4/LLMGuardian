@@ -1,1 +1,15 @@
-# Main Package Directory
+# Packages Directory
+
+## api
+
+## cli
+
+## core
+
+## defenders
+
+## scanners
+
+## utils
+
+## tests
