@@ -29,7 +29,9 @@ LLMGuardian/
 │       ├── defenders/          # Defense mechanisms
 │       ├── monitors/           # Monitoring components
 │       ├── api/                # API integration
-|       ├── vectors/            # Storage Validation
+|       ├── vectors/            # Embeddings protection / supply chain vulnerabilities
+|       ├── data/               # Sensive data exposure / data poisoning
+|       ├── agency/             # Excessive agency protection
 │       └── utils/              # Utility functions
 │
 ├── tests/                      # Test suite
