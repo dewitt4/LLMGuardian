@@ -64,6 +64,9 @@ LLMGuardian/
    - Real-time usage tracking
    - Threat detection
    - Anomaly monitoring
+  
+**Vectors** ('src/llmguardian/vectors/')** 
+**Data** ('src/llmguardian/data/')**
 
 ### Core Components
 
@@ -81,7 +84,7 @@ LLMGuardian/
    - Configuration management
    - Logging setup
    - Core functionality
-
+  
 ### Testing & Quality Assurance
 
 7. **Tests (`tests/`)**
