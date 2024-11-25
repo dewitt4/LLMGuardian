@@ -29,6 +29,7 @@ LLMGuardian/
 │       ├── defenders/          # Defense mechanisms
 │       ├── monitors/           # Monitoring components
 │       ├── api/                # API integration
+|       ├── vectors/            # Storage Validation
 │       └── utils/              # Utility functions
 │
 ├── tests/                      # Test suite
