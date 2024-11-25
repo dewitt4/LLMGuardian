@@ -3,7 +3,7 @@ LLMGuardian - A comprehensive security tool for LLM applications.
 """
 
 __title__ = "llmguardian"
-__version__ = "1.0.0"
+__version__ = "1.4.0"
 __author__ = "dewitt4"
 __license__ = "MIT"
 
