@@ -1,0 +1,127 @@
+# LLMGuardian Documentation Site Configuration
+
+# Theme settings
+theme: jekyll-theme-hacker
+title: LLMGuardian
+description: A comprehensive security toolkit for LLM applications
+logo: docs/assets/images/logo.png
+
+# GitHub information
+repository: dewitt4/LLMGuardian
+github:
+  is_project_page: true
+  repository_url: https://github.com/dewitt4/LLMGuardian
+  owner_url: https://github.com/dewitt4
+  owner_name: dewitt4
+
+# Site settings
+url: https://dewitt4.github.io
+baseurl: /LLMGuardian
+
+# Build settings
+markdown: kramdown
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
+
+# Navigation
+nav:
+  - title: Home
+    url: /
+  - title: Documentation
+    url: /docs/
+  - title: Installation
+    url: /docs/installation/
+  - title: Components
+    url: /docs/components/
+  - title: API Reference
+    url: /docs/api/
+  - title: Examples
+    url: /docs/examples/
+  - title: Contributing
+    url: /contributing/
+
+# Collections
+collections:
+  docs:
+    output: true
+    permalink: /:collection/:path/
+
+# Default settings
+defaults:
+  - scope:
+      path: ""
+      type: "docs"
+    values:
+      layout: "doc"
+  - scope:
+      path: ""
+    values:
+      layout: "default"
+
+# Plugins
+plugins:
+  - jekyll-seo-tag
+  - jekyll-sitemap
+  - jekyll-github-metadata
+  - jekyll-feed
+
+# Exclude files from processing
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - node_modules/
+  - vendor/
+  - .git/
+  - .github/
+  - src/
+  - tests/
+  - requirements/
+  - setup.py
+  - README.md
+  - LICENSE
+  - CONTRIBUTING.md
+  - CODE_OF_CONDUCT.md
+
+# Include specific files
+include:
+  - _pages
+  - .nojekyll
+
+# SEO settings
+twitter:
+  username: 
+  card: summary
+
+social:
+  name: LLMGuardian
+  links:
+    - https://github.com/dewitt4/LLMGuardian
+
+# Google Analytics
+google_analytics: # Add your GA tracking ID here
+
+# Additional settings for documentation
+docs_version: "1.0.0"
+api_version: "v1"
+min_python_version: "3.8"
+
+# Search settings
+search: true
+search_provider: lunr
+lunr:
+  search_within_pages: true
+  search_full_content: true
+  
+# Footer configuration
+footer:
+  links:
+    - label: "GitHub"
+      icon: "fab fa-fw fa-github"
+      url: "https://github.com/dewitt4/LLMGuardian"
+    - label: "Issues"
+      icon: "fas fa-fw fa-bug"
+      url: "https://github.com/dewitt4/LLMGuardian/issues"
+    - label: "License"
+      icon: "fas fa-fw fa-balance-scale"
+      url: "https://github.com/dewitt4/LLMGuardian/blob/main/LICENSE"
