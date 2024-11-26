@@ -7,15 +7,13 @@ description: A comprehensive security toolkit for LLM applications
 logo: docs/assets/images/logo.png
 
 # GitHub information
-repository: dewitt4/LLMGuardian
+repository: Finoptimize/LLMGuardian
 github:
   is_project_page: true
-  repository_url: https://github.com/dewitt4/LLMGuardian
-  owner_url: https://github.com/dewitt4
-  owner_name: dewitt4
-
+  repository_url: https://github.com/Finoptimize/LLMGuardian
+ 
 # Site settings
-url: https://dewitt4.github.io
+url: http://llmguardian.realacquire.com
 baseurl: /LLMGuardian
 
 # Build settings
@@ -96,7 +94,7 @@ twitter:
 social:
   name: LLMGuardian
   links:
-    - https://github.com/dewitt4/LLMGuardian
+    - https://github.com/Finoptimize/LLMGuardian
 
 # Google Analytics
 google_analytics: # Add your GA tracking ID here
@@ -118,10 +116,10 @@ footer:
   links:
     - label: "GitHub"
       icon: "fab fa-fw fa-github"
-      url: "https://github.com/dewitt4/LLMGuardian"
+      url: "https://github.com/Finoptimize/LLMGuardian"
     - label: "Issues"
       icon: "fas fa-fw fa-bug"
-      url: "https://github.com/dewitt4/LLMGuardian/issues"
+      url: "https://github.com/Finoptimize/LLMGuardian/issues"
     - label: "License"
       icon: "fas fa-fw fa-balance-scale"
-      url: "https://github.com/dewitt4/LLMGuardian/blob/main/LICENSE"
+      url: "https://github.com/Finoptimize/LLMGuardian/blob/main/LICENSE"
