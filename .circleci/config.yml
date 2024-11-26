@@ -1,35 +1,34 @@
 # .circleci/config.yml
 version: 2.1
 
-orbs:
-  python: circleci/python@2.1
-
 jobs:
   build-and-test:
     docker:
       - image: cimg/python:3.9
     steps:
       - checkout
-      
-      # Create and activate virtual environment
-      - python/install-packages:
-          pkg-manager: pip
-          # Create a virtual environment
-          venv-create: true
-          # Use requirements.txt for dependencies
-          pip-dependency-file: requirements/dev.txt
-          
+
+      # Set up Python virtual environment and install dependencies
+      - run:
+          name: Install Dependencies
+          command: |
+            python -m venv venv
+            . venv/bin/activate
+            python -m pip install --upgrade pip
+            pip install -r requirements/dev.txt
+
       # Run tests
       - run:
-          name: Run tests
+          name: Run Tests
           command: |
+            . venv/bin/activate
             python -m pytest tests/ -v
 
       # Store test results
       - store_test_results:
           path: test-results
 
-      # Store test reports
+      # Store test artifacts
       - store_artifacts:
           path: test-results
           destination: tr1
