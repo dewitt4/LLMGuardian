@@ -60,37 +60,46 @@ LLMGuardian/
    - Rate limiting
    - Token validation
 
-3. **Monitors (`src/llmguardian/monitors/`)**
+4. **Monitors (`src/llmguardian/monitors/`)**
    - Real-time usage tracking
    - Threat detection
    - Anomaly monitoring
-  
-**Vectors ('src/llmguardian/vectors/')** 
 
-**Data ('src/llmguardian/data/')**
+5. **Vectors (`src/llmguardian/vectors/`)**
+   - Embedding weaknesses
+   - Supply chain vulnerabilities
+   - Montior vector stores
 
-**Agency ('src/llmguardian/agency/')**
+6. **Data (`src/llmguardian/data/`)**
+   - Sensitive information disclosure
+   - Protection from data poisoning
+   - Data sanitizing
+
+7. **Agency (`src/llmguardian/agency/`)**
+   - Permission management
+   - Scope limitation
+   - Safe execution
 
 ### Core Components
 
-4. **CLI (`src/llmguardian/cli/`)**
+8. **CLI (`src/llmguardian/cli/`)**
    - Command-line interface
    - Interactive tools
    - Configuration management
 
-5. **API (`src/llmguardian/api/`)**
+9. **API (`src/llmguardian/api/`)**
    - RESTful endpoints
    - Middleware
    - Integration interfaces
 
-6. **Core (`src/llmguardian/core/`)**
+10. **Core (`src/llmguardian/core/`)**
    - Configuration management
    - Logging setup
    - Core functionality
   
 ### Testing & Quality Assurance
 
-7. **Tests (`tests/`)**
+11. **Tests (`tests/`)**
    - Unit tests for individual components
    - Integration tests for system functionality
    - Security-specific test cases
@@ -98,20 +107,20 @@ LLMGuardian/
 
 ### Documentation & Support
 
-8. **Documentation (`docs/`)**
+12. **Documentation (`docs/`)**
    - API documentation
    - Implementation guides
    - Security best practices
    - Usage examples
 
-9. **Docker (`docker/`)**
+13. **Docker (`docker/`)**
    - Containerization support
    - Development environment
    - Production deployment
 
 ### Development Tools
 
-10. **Scripts (`scripts/`)**
+14. **Scripts (`scripts/`)**
     - Setup utilities
     - Development tools
     - Security checking scripts
