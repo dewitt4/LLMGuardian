@@ -65,20 +65,20 @@ LLMGuardian/
    - Threat detection
    - Anomaly monitoring
 
-5. **Vectors ('src/llmguardian/vectors/')**
-   - 
-   - Protection for RAG documents
+5. **Vectors (`src/llmguardian/vectors/`)**
+   - Embedding weaknesses
+   - Supply chain vulnerabilities
    - Montior vector stores
 
-6. **Data ('src/llmguardian/data/')**
-   - Real-time usage tracking
-   - Threat detection
-   - Anomaly monitoring
+6. **Data (`src/llmguardian/data/`)**
+   - Sensitive information disclosure
+   - Protection from data poisoning
+   - Data sanitizing
 
-7. **Agency ('src/llmguardian/agency/')**
-   - Real-time usage tracking
-   - Threat detection
-   - Anomaly monitoring
+7. **Agency (`src/llmguardian/agency/`)**
+   - Permission management
+   - Scope limitation
+   - Safe execution
 
 ### Core Components
 
