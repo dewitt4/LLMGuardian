@@ -1,51 +1,40 @@
-# This config was automatically generated from your source code
-# Stacks detected: deps:python:.,file:setup.py:.
+# .circleci/config.yml
 version: 2.1
+
 orbs:
-  python: circleci/python@2
+  python: circleci/python@2.1
+
 jobs:
-  test-python:
-    # Install dependencies and run tests
+  build-and-test:
     docker:
-      - image: cimg/python:3.8-node
+      - image: cimg/python:3.9
     steps:
       - checkout
+      
+      # Create and activate virtual environment
       - python/install-packages:
-          pkg-manager: pip-dist
+          pkg-manager: pip
+          # Create a virtual environment
+          venv-create: true
+          # Use requirements.txt for dependencies
+          pip-dependency-file: requirements/dev.txt
+          
+      # Run tests
       - run:
           name: Run tests
-          command: pytest --junitxml=junit.xml || ((($? == 5)) && echo 'Did not find any tests to run.')
+          command: |
+            python -m pytest tests/ -v
+
+      # Store test results
       - store_test_results:
-          path: junit.xml
-  build-package:
-    # build python package
-    docker:
-      - image: cimg/python:3.8-node
-    steps:
-      - checkout
-      - run:
-          name: Create the ~/artifacts directory if it doesn't exist
-          command: mkdir -p ~/artifacts
-      - python/dist
+          path: test-results
+
+      # Store test reports
       - store_artifacts:
-          path: dist
-          destination: ~/artifacts
-  deploy:
-    # This is an example deploy job, not actually used by the workflow
-    docker:
-      - image: cimg/base:stable
-    steps:
-      # Replace this with steps to deploy to users
-      - run:
-          name: deploy
-          command: '#e.g. ./deploy.sh'
+          path: test-results
+          destination: tr1
+
 workflows:
-  build-and-test:
+  main:
     jobs:
-      - test-python
-      - build-package:
-          requires:
-            - test-python
-    # - deploy:
-    #     requires:
-    #       - build-package
+      - build-and-test
