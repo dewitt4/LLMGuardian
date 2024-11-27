@@ -12,12 +12,14 @@ executors:
 commands:
   install-dependencies:
     steps:
-      - python/install-packages:
-          pkg-manager: pip
-          packages:
-            - -r requirements/dev.txt
-            - -r requirements/test.txt
-  
+      - run:
+          name: Create virtualenv and install dependencies
+          command: |
+            python -m venv venv
+            . venv/bin/activate
+            pip install --upgrade pip
+            pip install -e ".[dev,test]"
+
 jobs:
   lint:
     executor: python-executor
@@ -25,17 +27,13 @@ jobs:
       - checkout
       - install-dependencies
       - run:
-          name: Run black
-          command: black --check src tests
-      - run:
-          name: Run flake8
-          command: flake8 src tests
-      - run:
-          name: Run isort
-          command: isort --check-only src tests
-      - run:
-          name: Run mypy
-          command: mypy src
+          name: Run linting checks
+          command: |
+            . venv/bin/activate
+            black --check src tests
+            flake8 src tests
+            isort --check-only src tests
+            mypy src
 
   test:
     executor: python-executor
@@ -43,11 +41,11 @@ jobs:
       - checkout
       - install-dependencies
       - run:
-          name: Run tests with coverage
+          name: Run tests
           command: |
-            pytest --cov=llmguardian --cov-report=xml tests/
-      - codecov/upload:
-          file: coverage.xml
+            . venv/bin/activate
+            mkdir -p test-results/pytest
+            pytest --junitxml=test-results/pytest/results.xml tests/
       - store_test_results:
           path: test-results
       - store_artifacts:
@@ -61,7 +59,9 @@ jobs:
       - install-dependencies
       - run:
           name: Build package
-          command: python setup.py sdist bdist_wheel
+          command: |
+            . venv/bin/activate
+            python setup.py sdist bdist_wheel
       - store_artifacts:
           path: dist
           destination: dist
