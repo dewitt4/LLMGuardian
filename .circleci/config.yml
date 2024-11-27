@@ -1,39 +1,82 @@
-# .circleci/config.yml
 version: 2.1
 
-jobs:
-  build-and-test:
+orbs:
+  python: circleci/python@2.1
+  codecov: codecov/codecov@3.2
+
+executors:
+  python-executor:
     docker:
-      - image: cimg/python:3.9
+      - image: cimg/python:3.8
+
+commands:
+  install-dependencies:
+    steps:
+      - python/install-packages:
+          pkg-manager: pip
+          packages:
+            - -r requirements/dev.txt
+            - -r requirements/test.txt
+  
+jobs:
+  lint:
+    executor: python-executor
     steps:
       - checkout
-
-      # Set up Python virtual environment and install dependencies
+      - install-dependencies
       - run:
-          name: Install Dependencies
-          command: |
-            python -m venv venv
-            . venv/bin/activate
-            python -m pip install --upgrade pip
-            pip install -r requirements/dev.txt
-
-      # Run tests
+          name: Run black
+          command: black --check src tests
       - run:
-          name: Run Tests
-          command: |
-            . venv/bin/activate
-            python -m pytest tests/ -v
+          name: Run flake8
+          command: flake8 src tests
+      - run:
+          name: Run isort
+          command: isort --check-only src tests
+      - run:
+          name: Run mypy
+          command: mypy src
 
-      # Store test results
+  test:
+    executor: python-executor
+    steps:
+      - checkout
+      - install-dependencies
+      - run:
+          name: Run tests with coverage
+          command: |
+            pytest --cov=llmguardian --cov-report=xml tests/
+      - codecov/upload:
+          file: coverage.xml
       - store_test_results:
           path: test-results
-
-      # Store test artifacts
       - store_artifacts:
           path: test-results
           destination: tr1
 
+  build:
+    executor: python-executor
+    steps:
+      - checkout
+      - install-dependencies
+      - run:
+          name: Build package
+          command: python setup.py sdist bdist_wheel
+      - store_artifacts:
+          path: dist
+          destination: dist
+
 workflows:
-  main:
+  version: 2
+  build-test-deploy:
     jobs:
-      - build-and-test
+      - lint
+      - test:
+          requires:
+            - lint
+      - build:
+          requires:
+            - test
+          filters:
+            branches:
+              only: main
