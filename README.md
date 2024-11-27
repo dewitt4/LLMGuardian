@@ -46,6 +46,7 @@ LLMGuardian/
 │
 ├── docs/                      # Documentation
 ├── scripts/                   # Utility scripts
+├── page/                      # Files for GitHub pages
 ├── requirements/              # Dependencies
 ├── docker/                    # Docker configurations
 └── config/                    # Various config files
