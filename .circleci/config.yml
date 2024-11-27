@@ -1,39 +1,82 @@
-# .circleci/config.yml
 version: 2.1
 
-jobs:
-  build-and-test:
-    docker:
-      - image: cimg/python:3.9
-    steps:
-      - checkout
+orbs:
+  python: circleci/python@2.1
+  codecov: codecov/codecov@3.2
 
-      # Set up Python virtual environment and install dependencies
+executors:
+  python-executor:
+    docker:
+      - image: cimg/python:3.8
+
+commands:
+  install-dependencies:
+    steps:
       - run:
-          name: Install Dependencies
+          name: Create virtualenv and install dependencies
           command: |
             python -m venv venv
             . venv/bin/activate
-            python -m pip install --upgrade pip
-            pip install -r requirements/dev.txt
+            pip install --upgrade pip
+            pip install -e ".[dev,test]"
 
-      # Run tests
+jobs:
+  lint:
+    executor: python-executor
+    steps:
+      - checkout
+      - install-dependencies
       - run:
-          name: Run Tests
+          name: Run linting checks
           command: |
             . venv/bin/activate
-            python -m pytest tests/ -v
+            black --check src tests
+            flake8 src tests
+            isort --check-only src tests
+            mypy src
 
-      # Store test results
+  test:
+    executor: python-executor
+    steps:
+      - checkout
+      - install-dependencies
+      - run:
+          name: Run tests
+          command: |
+            . venv/bin/activate
+            mkdir -p test-results/pytest
+            pytest --junitxml=test-results/pytest/results.xml tests/
       - store_test_results:
           path: test-results
-
-      # Store test artifacts
       - store_artifacts:
           path: test-results
           destination: tr1
 
+  build:
+    executor: python-executor
+    steps:
+      - checkout
+      - install-dependencies
+      - run:
+          name: Build package
+          command: |
+            . venv/bin/activate
+            python setup.py sdist bdist_wheel
+      - store_artifacts:
+          path: dist
+          destination: dist
+
 workflows:
-  main:
+  version: 2
+  build-test-deploy:
     jobs:
-      - build-and-test
+      - lint
+      - test:
+          requires:
+            - lint
+      - build:
+          requires:
+            - test
+          filters:
+            branches:
+              only: main

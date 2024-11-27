@@ -48,6 +48,102 @@ llmguardian add-pattern -p "pattern" -t direct -s 8 -d "description"
 # Configure settings
 llmguardian configure --risk-threshold 8 --confidence-threshold 0.8
 ```
+
+# LLMGuardian Dashboard
+
+A web-based monitoring and control interface for LLMGuardian security features, built with Streamlit.
+
+## Features
+
+- Real-time security monitoring
+- Privacy violation tracking
+- Vector security analysis
+- System usage statistics
+- Configuration management
+
+## Installation
+
+```bash
+pip install -r requirements/dashboard.txt
+```
+
+## Quick Start
+
+```bash
+python -m llmguardian.dashboard.app
+```
+
+Visit `http://localhost:8501` in your browser.
+
+## Components
+
+### Overview Page
+- Security metrics
+- Recent alerts
+- Usage trends
+- System health status
+
+### Privacy Monitor
+- Real-time privacy violations
+- Category-based analysis
+- Rule management
+- Compliance tracking
+
+### Vector Security
+- Anomaly detection
+- Cluster visualization
+- Vector scanning
+- Threat analysis
+
+### Usage Statistics
+- Resource monitoring
+- Request tracking
+- Performance metrics
+- Historical data
+
+### Settings
+- Security configuration
+- Privacy rules
+- Monitoring parameters
+- System preferences
+
+## Configuration
+
+```python
+# config/dashboard_config.yaml
+server:
+  port: 8501
+  host: "0.0.0.0"
+
+monitoring:
+  refresh_rate: 60  # seconds
+  alert_threshold: 0.8
+  retention_period: 7  # days
+```
+
+## Docker Support
+
+```bash
+docker build -t llmguardian-dashboard .
+docker run -p 8501:8501 llmguardian-dashboard
+```
+
+## Security
+
+- Authentication required
+- HTTPS support
+- Role-based access
+- Audit logging
+
+## API Integration
+
+```python
+from llmguardian.dashboard import LLMGuardianDashboard
+
+dashboard = LLMGuardianDashboard()
+dashboard.run()
+```
+
 # LLMGuardian Core Package
 
 The core package provides the fundamental building blocks and essential services for the LLMGuardian security framework. It implements critical security features, configuration management, logging, rate limiting, and exception handling.
@@ -942,6 +1038,100 @@ validator.add_rule(
 )
 ```
 
+# LLMGuardian Agency Package
+
+Controls and limits LLM model agency through permissions, actions, scopes and secure execution.
+
+## Components
+
+### PermissionManager
+Manages access permissions for LLM operations.
+
+```python
+from llmguardian.agency import PermissionManager
+
+manager = PermissionManager()
+manager.grant_permission(
+    "user_123",
+    Permission(resource="model_x", level=PermissionLevel.READ)
+)
+```
+
+### ActionValidator 
+Validates LLM actions against security policies.
+
+```python
+from llmguardian.agency import ActionValidator, Action
+
+validator = ActionValidator()
+action = Action(
+    type=ActionType.READ,
+    resource="customer_data",
+    parameters={"id": "123"}
+)
+is_valid = validator.validate_action(action, context={})
+```
+
+### ScopeLimiter
+Enforces operational boundaries for LLMs.
+
+```python
+from llmguardian.agency import ScopeLimiter, Scope, ScopeType
+
+limiter = ScopeLimiter()
+limiter.add_scope(
+    "user_123",
+    Scope(type=ScopeType.DATA, resources={"public_data"})
+)
+```
+
+### SafeExecutor
+Provides secure execution of validated LLM actions.
+
+```python
+from llmguardian.agency import SafeExecutor
+
+executor = SafeExecutor()
+result = await executor.execute(
+    action=action,
+    user_id="user_123", 
+    context={}
+)
+```
+
+## Security Features
+
+- Fine-grained permission control
+- Action validation and filtering
+- Resource scope limitations  
+- Secure execution environment
+- Comprehensive audit logging
+
+## Configuration
+
+```python
+config = {
+    "permissions": {
+        "default_level": "READ",
+        "require_explicit": True
+    },
+    "actions": {
+        "allowed_types": ["READ", "WRITE"],
+        "require_validation": True
+    },
+    "scopes": {
+        "default_type": "DATA",
+        "max_resources": 10
+    }
+}
+```
+
+## Installation
+
+```bash
+pip install llmguardian[agency]
+```
+
 # LLMGuardian Vectors Package
 
 The Vectors package provides comprehensive security tools for handling vector embeddings, RAG (Retrieval-Augmented Generation) operations, and vector storage. It addresses key security concerns outlined in the OWASP Top 10 for LLM applications, particularly focusing on vector and embedding weaknesses (LLM08).
@@ -1233,3 +1423,186 @@ pytest tests/vectors/
 # Run specific test file
 pytest tests/vectors/test_embedding_validator.py
 ```
+
+# LLMGuardian API Documentation
+
+## Base URL
+`https://api.llmguardian.com/v1` # replace llmguardian.com with your domain
+
+## Authentication
+Bearer token required in Authorization header:
+```
+Authorization: Bearer <your_token>
+```
+
+## Endpoints
+
+### Security Scan
+`POST /scan`
+
+Scans content for security violations.
+
+**Request:**
+```json
+{
+  "content": "string",
+  "context": {
+    "source": "string",
+    "user_id": "string"
+  },
+  "security_level": "medium"
+}
+```
+
+**Response:**
+```json
+{
+  "is_safe": true,
+  "risk_level": "low",
+  "violations": [
+    {
+      "type": "string",
+      "description": "string",
+      "location": "string"
+    }
+  ],
+  "recommendations": [
+    "string"
+  ],
+  "metadata": {
+    "timestamp": "2024-01-01T00:00:00Z"
+  }
+}
+```
+
+### Privacy Check
+`POST /privacy/check`
+
+Checks content for privacy violations.
+
+**Request:**
+```json
+{
+  "content": "string",
+  "privacy_level": "confidential",
+  "context": {
+    "department": "string",
+    "data_type": "string"
+  }
+}
+```
+
+**Response:**
+```json
+{
+  "compliant": true,
+  "violations": [
+    {
+      "category": "PII",
+      "details": "string",
+      "severity": "high"
+    }
+  ],
+  "modified_content": "string",
+  "metadata": {
+    "timestamp": "2024-01-01T00:00:00Z"
+  }
+}
+```
+
+### Vector Scan
+`POST /vectors/scan`
+
+Scans vector embeddings for security issues.
+
+**Request:**
+```json
+{
+  "vectors": [
+    [0.1, 0.2, 0.3]
+  ],
+  "metadata": {
+    "model": "string",
+    "source": "string"
+  }
+}
+```
+
+**Response:**
+```json
+{
+  "is_safe": true,
+  "vulnerabilities": [
+    {
+      "type": "poisoning",
+      "severity": "high",
+      "affected_indices": [1, 2, 3]
+    }
+  ],
+  "recommendations": [
+    "string"
+  ]
+}
+```
+
+## Error Responses
+```json
+{
+  "detail": "Error message",
+  "error_code": "ERROR_CODE",
+  "timestamp": "2024-01-01T00:00:00Z"
+}
+```
+
+## Rate Limiting
+- 100 requests per minute per API key
+- 429 Too Many Requests response when exceeded
+
+## SDKs
+```python
+from llmguardian import Client
+
+client = Client("<api_key>")
+result = client.scan_content("text to scan")
+```
+
+## Examples
+```python
+# Security scan
+response = requests.post(
+    "https://api.llmguardian.com/v1/scan",  # replace llmguardian.com with your domain
+    headers={"Authorization": f"Bearer {token}"},
+    json={
+        "content": "sensitive text",
+        "security_level": "high"
+    }
+)
+
+# Privacy check with context
+response = requests.post(
+    "https://api.llmguardian.com/v1/privacy/check",
+    headers={"Authorization": f"Bearer {token}"},
+    json={
+        "content": "text with PII",
+        "privacy_level": "restricted",
+        "context": {"department": "HR"}
+    }
+)
+```
+
+## Webhook Events
+```json
+{
+  "event": "security_violation",
+  "data": {
+    "violation_type": "string",
+    "severity": "high",
+    "timestamp": "2024-01-01T00:00:00Z"
+  }
+}
+```
+
+## API Status
+Check status at: https://status.llmguardian.com # replace llmguardian.com with your domain
+
+Rate limits and API metrics available in dashboard.
