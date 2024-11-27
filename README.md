@@ -27,6 +27,7 @@ LLMGuardian/
 ├── src/                         # Source code
 │   └── llmguardian/            # Main package directory
 │       ├── cli/                # Command-line interface
+│       ├── dashboard/          # Streamlit dashboard
 │       ├── core/               # Core functionality
 │       ├── scanners/           # Security scanning modules
 │       ├── defenders/          # Defense mechanisms
@@ -46,7 +47,7 @@ LLMGuardian/
 ├── scripts/                   # Utility scripts
 ├── requirements/              # Dependencies
 ├── docker/                    # Docker configurations
-└── [Configuration Files]      # Various config files
+└── config/                    # Various config files
 ```
 
 ## Component Details
@@ -129,6 +130,13 @@ LLMGuardian/
     - Setup utilities
     - Development tools
     - Security checking scripts
+
+### Dashboard
+
+14. **Dashboard(`src/llmguardian/dashboard/`)**
+   - Streamlit app
+   - Visualization 
+   - Monitoring and control
 
 ## Key Files
 
