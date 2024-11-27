@@ -1,0 +1,8 @@
+server:
+  port: 8501
+  host: "0.0.0.0"
+
+monitoring:
+  refresh_rate: 60  # seconds
+  alert_threshold: 0.8
+  retention_period: 7  # days
