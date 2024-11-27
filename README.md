@@ -1,7 +1,10 @@
 # LLMGuardian
+
+[CLICK HERE FOR THE FULL PROJECT](https://github.com/Finoptimize/LLMGuardian)
+
 Comprehensive LLM protection toolset aligned to addressing OWASP vulnerabilities
 
-Author: DeWitt Gibson https://www.linkedin.com/in/dewitt-gibson/
+Author: [DeWitt Gibson https://www.linkedin.com/in/dewitt-gibson/](https://www.linkedin.com/in/dewitt-gibson)
 
 **Full Documentaion and Usage Instructions: [DOCS](docs/README.md)**
 
