@@ -168,3 +168,23 @@ To start working with this structure:
 3. Install dependencies from the appropriate requirements file
 4. Run the test suite to ensure everything is working
 5. Follow the contribution guidelines for making changes
+
+## Huggingface
+
+Huggingface Space Implementation:
+
+1. Create FastAPI backend with:
+
+   - Model scanning endpoints
+   - Prompt injection detection
+   - Input/output validation
+   - Rate limiting middleware
+   - Authentication checks
+
+
+2. Gradio UI frontend with:
+
+   - Model security testing interface
+   - Vulnerability scanning dashboard
+   - Real-time attack detection
+   - Configuration settings
