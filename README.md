@@ -50,6 +50,7 @@ LLMGuardian/
 ├── requirements/              # Dependencies
 ├── docker/                    # Docker configurations
 └── config/                    # Various config files
+└── app.py                     # Huggingface Space deployment
 ```
 
 ## Component Details
