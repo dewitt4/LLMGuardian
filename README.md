@@ -49,7 +49,7 @@ LLMGuardian/
 ├── page/                      # Files for GitHub pages
 ├── requirements/              # Dependencies
 ├── docker/                    # Docker configurations
-└── config/                    # Various config files
+├── config/                    # Various config files
 └── app.py                     # Huggingface Space deployment
 ```
 
