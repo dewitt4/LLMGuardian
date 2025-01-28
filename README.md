@@ -49,7 +49,8 @@ LLMGuardian/
 ├── page/                      # Files for GitHub pages
 ├── requirements/              # Dependencies
 ├── docker/                    # Docker configurations
-└── config/                    # Various config files
+├── config/                    # Various config files
+└── app.py                     # Huggingface Space deployment
 ```
 
 ## Component Details
@@ -172,6 +173,8 @@ To start working with this structure:
 ## Huggingface
 
 Huggingface Space Implementation:
+
+https://huggingface.co/spaces/Safe-Harbor/LLMGuardian
 
 1. Create FastAPI backend with:
 
