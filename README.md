@@ -191,3 +191,16 @@ https://huggingface.co/spaces/Safe-Harbor/LLMGuardian
    - Vulnerability scanning dashboard
    - Real-time attack detection
    - Configuration settings
+  
+```
+```
+@misc{lightweightapibasedaimodelsecuritytool,
+      title={LLMGuardian}, 
+      author={DeWitt Gibson},
+      year={2025},
+      eprint={null},
+      archivePrefix={null},
+      primaryClass={null},
+      url={[https://github.com/dewitt4/LLMGuardian](https://github.com/dewitt4/LLMGuardian)}, 
+}
+```
