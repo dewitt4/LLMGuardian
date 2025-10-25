@@ -17,3 +17,9 @@ pytest>=7.0.0
 pytest-cov>=4.0.0
 black>=23.0.0
 flake8>=6.0.0
+
+# Hugging Face Transformers
+fastapi>=0.70.0
+uvicorn>=0.15.0
+gradio>=3.0.0
+llmguardian>=1.0.0  # Replace with the actual version of llmguardian
