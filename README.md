@@ -19,11 +19,10 @@ LLMGuardian follows a modular and secure architecture designed to provide compre
 ```
 LLMGuardian/
 ├── .github/                      # GitHub specific configurations
-│   ├── workflows/                # GitHub Actions workflows
+│   ├── workflows/                # GitHub Actions workflows for CI/CD
 │   ├── CODEOWNERS               # Repository ownership rules
 │   ├── ISSUE_TEMPLATE/          # Issue reporting templates
 │   └── PULL_REQUEST_TEMPLATE.md # PR guidelines
-├── .circleci/                   # config files for using CircleCI https://circleci.com/ 
 │
 ├── src/                         # Source code
 │   └── llmguardian/            # Main package directory
