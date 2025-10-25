@@ -8,8 +8,6 @@ Author: [DeWitt Gibson https://www.linkedin.com/in/dewitt-gibson/](https://www.l
 
 **Full Documentaion and Usage Instructions: [DOCS](docs/README.md)**
 
-**Please see the Projects and Issues tab above for completion roadmap**
-
 # Project Structure
 
 LLMGuardian follows a modular and secure architecture designed to provide comprehensive protection for LLM applications. Below is the detailed project structure with explanations for each component:
@@ -147,7 +145,7 @@ LLMGuardian/
 - `requirements/*.txt`: Environment-specific dependencies
 - `.pre-commit-config.yaml`: Code quality hooks
 - `CONTRIBUTING.md`: Contribution guidelines
-- `LICENSE`: MIT license terms
+- `LICENSE`: Apache 2.0 license terms
 
 ## Design Principles
 

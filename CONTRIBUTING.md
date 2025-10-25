@@ -124,7 +124,7 @@ Releases are handled by maintainers following the semantic versioning (SemVer) s
 
 ### Attribution
 
-We use the MIT License - see the LICENSE file for details. When you contribute code, you agree to license your contribution under the same terms.
+We use the Apache License 2.0 - see the LICENSE file for details. When you contribute code, you agree to license your contribution under the same terms.
 
 ### Support
 
