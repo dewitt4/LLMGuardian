@@ -9,7 +9,7 @@ from pathlib import Path
 # Version information
 __version__ = "1.0.0"
 __author__ = "dewitt4"
-__license__ = "MIT"
+__license__ = "Apache-2.0"
 
 # Core components
 from .config import Config, SecurityConfig, APIConfig, LoggingConfig, MonitoringConfig
