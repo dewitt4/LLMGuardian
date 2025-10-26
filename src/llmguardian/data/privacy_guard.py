@@ -11,7 +11,6 @@ from collections import defaultdict
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
-
 from typing import Any, Dict, List, Optional, Set, Union
 
 from ..core.exceptions import SecurityError
