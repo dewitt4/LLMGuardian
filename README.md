@@ -663,7 +663,7 @@ If you use LLMGuardian in your research or project, please cite:
 - **Issues**: [GitHub Issues](https://github.com/dewitt4/LLMGuardian/issues)
 - **Pull Requests**: [GitHub PRs](https://github.com/dewitt4/LLMGuardian/pulls)
 
-## Planned Enhancements for 2025-2036
+## Planned Enhancements for 2025-2026
 
 The LLMGuardian project, initially written in 2024, is designed to be a comprehensive security toolset aligned with addressing OWASP vulnerabilities in Large Language Models. The **OWASP Top 10 for LLM Applications 2025** (Version 2025, released November 18, 2024) includes several critical updates, expanded categories, and new entries, specifically reflecting the risks associated with agentic systems, RAG (Retrieval-Augmented Generation), and resource consumption.
 
