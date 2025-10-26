@@ -70,7 +70,7 @@ jobs:
         load: true
     
     - name: Build and push Docker image (main/tags)
-      if: github.event_name == 'push' || github.event_name == 'release' || github.event_name == 'workflow_dispatch'
+      if: github.event_name != 'pull_request'
       uses: docker/build-push-action@v5
       with:
         context: .
