@@ -4,13 +4,6 @@
 # CLI Dependencies
 click>=8.1.0
 rich>=13.0.0
-pathlib>=1.0.1
-
-# Core Dependencies
-dataclasses>=0.6
-typing>=3.7.4
-logging>=0.5.1.2
-enum34>=1.1.10
 
 # Dashboard Dependencies
 streamlit>=1.28.0
