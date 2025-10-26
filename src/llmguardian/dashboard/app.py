@@ -213,7 +213,7 @@ class LLMGuardianDashboard:
                 delta_color="normal"
             )
 
-        st.divider()
+        st.markdown("---")
 
         # Charts Row
         col1, col2 = st.columns(2)
@@ -228,7 +228,7 @@ class LLMGuardianDashboard:
             fig = self._create_threat_distribution_chart()
             st.plotly_chart(fig, use_container_width=True)
 
-        st.divider()
+        st.markdown("---")
 
         # Recent Alerts Section
         col1, col2 = st.columns([2, 1])
@@ -269,7 +269,7 @@ class LLMGuardianDashboard:
         with col3:
             st.metric("Compliance Score", f"{self._get_compliance_score()}%")
 
-        st.divider()
+        st.markdown("---")
 
         # Privacy violations breakdown
         col1, col2 = st.columns(2)
@@ -295,7 +295,7 @@ class LLMGuardianDashboard:
             rules_df = self._get_privacy_rules_status()
             st.dataframe(rules_df, use_container_width=True)
 
-        st.divider()
+        st.markdown("---")
 
         # Real-time privacy check
         st.subheader("Real-time Privacy Check")
@@ -339,7 +339,7 @@ class LLMGuardianDashboard:
         with col4:
             st.metric("DoS Attempts", self._get_dos_attempts())
 
-        st.divider()
+        st.markdown("---")
 
         # Threat Analysis
         col1, col2 = st.columns(2)
@@ -370,7 +370,7 @@ class LLMGuardianDashboard:
                 )
                 st.plotly_chart(fig, use_container_width=True)
 
-        st.divider()
+        st.markdown("---")
 
         # Active Threats Table
         st.subheader("Active Threats")
@@ -408,7 +408,7 @@ class LLMGuardianDashboard:
         with col3:
             st.metric("Request Rate", f"{self._get_request_rate()}/min")
 
-        st.divider()
+        st.markdown("---")
 
         # Usage Charts
         col1, col2 = st.columns(2)
@@ -437,7 +437,7 @@ class LLMGuardianDashboard:
                 )
                 st.plotly_chart(fig, use_container_width=True)
 
-        st.divider()
+        st.markdown("---")
 
         # Performance Metrics
         st.subheader("Performance Metrics")
@@ -486,7 +486,7 @@ class LLMGuardianDashboard:
                         results = self._run_security_scan(scan_input, scan_mode, sensitivity)
                         
                         # Display Results
-                        st.divider()
+                        st.markdown("---")
                         st.subheader("Scan Results")
                         
                         col1, col2, col3 = st.columns(3)
@@ -515,7 +515,7 @@ class LLMGuardianDashboard:
                 else:
                     st.warning("Please enter text to scan")
 
-        st.divider()
+        st.markdown("---")
 
         # Scan History
         st.subheader("Recent Scans")
