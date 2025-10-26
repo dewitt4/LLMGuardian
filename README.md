@@ -663,6 +663,82 @@ If you use LLMGuardian in your research or project, please cite:
 - **Issues**: [GitHub Issues](https://github.com/dewitt4/LLMGuardian/issues)
 - **Pull Requests**: [GitHub PRs](https://github.com/dewitt4/LLMGuardian/pulls)
 
+## Planned Enhancements for 2025-2036
+
+The LLMGuardian project, initially written in 2024, is designed to be a comprehensive security toolset aligned with addressing OWASP vulnerabilities in Large Language Models. The **OWASP Top 10 for LLM Applications 2025** (Version 2025, released November 18, 2024) includes several critical updates, expanded categories, and new entries, specifically reflecting the risks associated with agentic systems, RAG (Retrieval-Augmented Generation), and resource consumption.
+
+Based on the existing structure of LLMGuardian (which includes dedicated components for Prompt Injection Detection, Data Leakage Prevention, Output Validation, Vectors, Data, and Agency protection) and the specific changes introduced in the 2025 list, the following updates and enhancements are necessary to bring the project up to speed.
+
+***
+
+# LLMGuardian 2025 OWASP Top 10 Updates
+
+This list outlines the necessary updates and enhancements to align LLMGuardian with the **OWASP Top 10 for LLM Applications 2025** (Version 2025). Updates in progress.
+
+## Core Security Component Enhancements (Scanners, Defenders, Monitors)
+
+### **LLM01:2025 Prompt Injection**
+LLMGuardian currently features Prompt Injection Detection. Updates should focus on newly emerging attack vectors:
+
+*   **Multimodal Injection Detection:** Enhance scanning modules to detect hidden malicious instructions embedded within non-text data types (like images) that accompany benign text inputs, exploiting the complexities of multimodal AI systems.
+*   **Obfuscation/Payload Splitting Defense:** Improve defenders' ability to detect and mitigate malicious inputs disguised using payload splitting, multilingual formats, or encoding (e.g., Base64 or emojis).
+
+### **LLM02:2025 Sensitive Information Disclosure**
+LLMGuardian includes Sensitive data exposure protection and Data sanitization in the `data/` component.
+
+*   **System Preamble Concealment:** Implement specific checks or guidance within configuration management to verify that system prompts and internal settings are protected and not inadvertently exposed.
+
+### **LLM03:2025 Supply Chain**
+LLMGuardian utilizes Dependency Review, SBOM generation, and Provenance Attestations. Updates are required to address model-specific supply chain risks:
+
+*   **Model Provenance and Integrity Vetting:** Implement tooling to perform third-party model integrity checks using signing and file hashes, compensating for the lack of strong model provenance in published models.
+*   **LoRA Adapter Vulnerability Scanning:** Introduce specialized scanning for vulnerable LoRA (Low-Rank Adaptation) adapters used during fine-tuning, as these can compromise the integrity of the pre-trained base model.
+*   **AI/ML BOM Standards:** Ensure SBOM generation aligns with emerging AI BOMs and ML SBOMs standards, evaluating options starting with OWASP CycloneDX.
+
+### **LLM04:2025 Data and Model Poisoning**
+LLMGuardian has features for Protection from data poisoning.
+
+*   **Backdoor/Sleeper Agent Detection:** Enhance model security validation and monitoring components to specifically detect latent backdoors, utilizing adversarial robustness tests during deployment, as subtle triggers can change model behavior later.
+
+### **LLM05:2025 Improper Output Handling**
+LLMGuardian includes Output Validation. Improper Output Handling focuses on insufficient validation before outputs are passed downstream.
+
+*   **Context-Aware Output Encoding:** Implement filtering mechanisms within the `defenders/` component to ensure context-aware encoding (e.g., HTML encoding for web content, SQL escaping for database queries) is applied before model output is passed to downstream systems.
+*   **Strict Downstream Input Validation:** Ensure all responses coming from the LLM are subject to robust input validation before they are used by backend functions, adhering to OWASP ASVS guidelines.
+
+### **LLM06:2025 Excessive Agency**
+LLMGuardian has a dedicated `agency/` component for "Excessive agency protection".
+
+*   **Granular Extension Control:** Enhance permission management within `agency/` to strictly limit the functionality and permissions granted to LLM extensions, enforcing the principle of least privilege on downstream systems.
+*   **Human-in-the-Loop Implementation:** Integrate explicit configuration and components to require human approval for high-impact actions before execution, eliminating excessive autonomy.
+
+### **LLM07:2025 System Prompt Leakage**
+This is a newly highlighted vulnerability in the 2025 list.
+
+*   **Sensitive Data Removal:** Develop scanning tools to identify and flag embedded sensitive data (API keys, credentials, internal role structures) within system prompts.
+*   **Externalized Guardrails Enforcement:** Reinforce the design principle that critical controls (e.g., authorization bounds checks, privilege separation) must be enforced by systems independent of the LLM, rather than delegated through system prompt instructions.
+
+## RAG and Resource Management Updates
+
+### **LLM08:2025 Vector and Embedding Weaknesses**
+LLMGuardian has a `vectors/` component dedicated to Embedding weaknesses detection and Retrieval guard. The 2025 guidance strongly focuses on RAG security.
+
+*   **Permission-Aware Vector Stores:** Enhance the Retrieval guard functionality to implement fine-grained access controls and logical partitioning within the vector database to prevent unauthorized access or cross-context information leaks in multi-tenant environments.
+*   **RAG Knowledge Base Validation:** Integrate robust data validation pipelines and source authentication for all external knowledge sources used in Retrieval Augmented Generation.
+
+### **LLM09:2025 Misinformation**
+This category focuses on addressing hallucinations and overreliance.
+
+*   **Groundedness and Cross-Verification:** Integrate monitoring or evaluation features focused on assessing the "RAG Triad" (context relevance, groundedness, and question/answer relevance) to improve reliability and reduce the risk of misinformation.
+*   **Unsafe Code Output Filtering:** Implement filters to vet LLM-generated code suggestions, specifically scanning for and blocking references to insecure or non-existent software packages which could lead to developers downloading malware.
+
+### **LLM10:2025 Unbounded Consumption**
+This vulnerability expands beyond DoS to include Denial of Wallet (DoW) and Model Extraction. LLMGuardian already provides Rate Limiting.
+
+*   **Model Extraction Defenses:** Implement features to limit the exposure of sensitive model information (such as `logit_bias` and `logprobs`) in API responses to prevent functional model replication or model extraction attacks.
+*   **Watermarking Implementation:** Explore and integrate watermarking frameworks to embed and detect unauthorized use of LLM outputs, serving as a deterrent against model theft.
+*   **Enhanced Resource Monitoring:** Expand monitoring to detect patterns indicative of DoW attacks, setting triggers based on consumption limits (costs) rather than just request volume.
+
 ## 🙏 Acknowledgments
 
 Built with alignment to [OWASP Top 10 for LLM Applications](https://genai.owasp.org/llm-top-10/)
