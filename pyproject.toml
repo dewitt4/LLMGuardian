@@ -10,6 +10,7 @@ authors = [{name = "dewitt4"}]
 license = {file = "LICENSE"}
 readme = "README.md"
 requires-python = ">=3.8"
+dynamic = ["keywords", "scripts"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
@@ -17,6 +18,11 @@ classifiers = [
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Security",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Operating System :: OS Independent",
 ]
 
 dependencies = [
@@ -25,15 +31,12 @@ dependencies = [
     "pyyaml>=6.0.1",
     "psutil>=5.9.0",
     "python-json-logger>=2.0.7",
-    "dataclasses>=0.6",
     "typing-extensions>=4.5.0",
     "pyjwt>=2.8.0",
     "cryptography>=41.0.0",
-    "fastapi>=0.100.0",
-    "streamlit>=1.24.0",
-    "plotly>=5.15.0",
-    "pandas>=2.0.0",
-    "numpy>=1.24.0"
+    "requests>=2.31.0",
+    "prometheus-client>=0.17.0",
+    "statsd>=4.0.1",
 ]
 
 [project.optional-dependencies]
@@ -51,6 +54,16 @@ test = [
     "pytest-cov>=4.1.0",
     "pytest-mock>=3.11.1"
 ]
+dashboard = [
+    "streamlit>=1.24.0",
+    "plotly>=5.15.0",
+    "pandas>=2.0.0",
+    "numpy>=1.24.0"
+]
+api = [
+    "fastapi>=0.100.0",
+    "uvicorn>=0.23.0"
+]
 
 [project.urls]
 Homepage = "https://github.com/dewitt4/LLMGuardian"
@@ -58,8 +71,14 @@ Documentation = "https://llmguardian.readthedocs.io"
 Repository = "https://github.com/dewitt4/LLMGuardian.git"
 Issues = "https://github.com/dewitt4/LLMGuardian/issues"
 
+[project.scripts]
+llmguardian = "llmguardian.cli.main:cli"
+
 [tool.setuptools]
 package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
 
 [tool.black]
 line-length = 88
