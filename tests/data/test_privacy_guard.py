@@ -2,17 +2,19 @@
 tests/data/test_privacy_guard.py - Test cases for privacy protection functionality
 """
 
-import pytest
 from datetime import datetime
 from unittest.mock import Mock, patch
+
+import pytest
+
+from llmguardian.core.exceptions import SecurityError
 from llmguardian.data.privacy_guard import (
-    PrivacyGuard,
-    PrivacyRule,
-    PrivacyLevel,
     DataCategory,
     PrivacyCheck,
+    PrivacyGuard,
+    PrivacyLevel,
+    PrivacyRule,
 )
-from llmguardian.core.exceptions import SecurityError
 
 
 @pytest.fixture

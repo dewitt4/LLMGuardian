@@ -2,12 +2,13 @@
 Tests for the LLMGuardian Prompt Injection Scanner
 """
 
-import pytest
 from typing import List
+
+import pytest
 from prompt_injection_scanner import (
-    PromptInjectionScanner,
     InjectionPattern,
     InjectionType,
+    PromptInjectionScanner,
     ScanResult,
 )
 

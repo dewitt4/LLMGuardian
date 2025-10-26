@@ -2,19 +2,21 @@
 data/privacy_guard.py - Privacy protection and enforcement
 """
 
-# Add these imports at the top
-from typing import Dict, List, Optional, Any, Set, Union
-from dataclasses import dataclass, field
-from datetime import datetime
-from enum import Enum
-import re
 import hashlib
 import json
+import re
 import threading
 import time
 from collections import defaultdict
-from ..core.logger import SecurityLogger
+from dataclasses import dataclass, field
+from datetime import datetime
+from enum import Enum
+
+# Add these imports at the top
+from typing import Any, Dict, List, Optional, Set, Union
+
 from ..core.exceptions import SecurityError
+from ..core.logger import SecurityLogger
 
 
 class PrivacyLevel(Enum):

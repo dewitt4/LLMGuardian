@@ -2,16 +2,17 @@
 core/scanners/prompt_injection_scanner.py - Prompt injection detection for LLMGuardian
 """
 
-import re
-from dataclasses import dataclass
-from enum import Enum
-from typing import List, Optional, Dict, Set, Pattern
 import json
 import logging
+import re
+from dataclasses import dataclass
 from datetime import datetime
+from enum import Enum
+from typing import Dict, List, Optional, Pattern, Set
+
+from ..config import Config
 from ..exceptions import PromptInjectionError
 from ..logger import SecurityLogger
-from ..config import Config
 
 
 class InjectionType(Enum):

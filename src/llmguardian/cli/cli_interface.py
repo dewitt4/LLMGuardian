@@ -3,21 +3,22 @@ LLMGuardian CLI Interface
 Command-line interface for the LLMGuardian security tool.
 """
 
-import click
 import json
 import logging
-from typing import Optional, Dict
 from pathlib import Path
-from rich.console import Console
-from rich.table import Table
-from rich.panel import Panel
-from rich import print as rprint
-from rich.logging import RichHandler
+from typing import Dict, Optional
+
+import click
 from prompt_injection_scanner import (
-    PromptInjectionScanner,
     InjectionPattern,
     InjectionType,
+    PromptInjectionScanner,
 )
+from rich import print as rprint
+from rich.console import Console
+from rich.logging import RichHandler
+from rich.panel import Panel
+from rich.table import Table
 
 # Set up logging with rich
 logging.basicConfig(

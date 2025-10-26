@@ -2,16 +2,18 @@
 data/poison_detector.py - Detection and prevention of data poisoning attacks
 """
 
-import numpy as np
-from typing import Dict, List, Optional, Any, Set, Tuple
+import hashlib
+import json
+from collections import defaultdict
 from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
-from collections import defaultdict
-import json
-import hashlib
-from ..core.logger import SecurityLogger
+from typing import Any, Dict, List, Optional, Set, Tuple
+
+import numpy as np
+
 from ..core.exceptions import SecurityError
+from ..core.logger import SecurityLogger
 
 
 class PoisonType(Enum):

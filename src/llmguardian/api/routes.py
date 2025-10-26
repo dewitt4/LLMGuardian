@@ -1,9 +1,11 @@
 # src/llmguardian/api/routes.py
-from fastapi import APIRouter, Depends, HTTPException
 from typing import List
-from .models import SecurityRequest, SecurityResponse, PrivacyRequest, VectorRequest
+
+from fastapi import APIRouter, Depends, HTTPException
+
 from ..data.privacy_guard import PrivacyGuard
 from ..vectors.vector_scanner import VectorScanner
+from .models import PrivacyRequest, SecurityRequest, SecurityResponse, VectorRequest
 from .security import verify_token
 
 router = APIRouter()

@@ -2,18 +2,20 @@
 core/rate_limiter.py - Rate limiting implementation for LLMGuardian
 """
 
-import time
-import os
-import psutil
-from datetime import datetime, timedelta
-from typing import Dict, Optional, List, Tuple, Any
-import threading
-from dataclasses import dataclass
-from enum import Enum
 import json
-from .logger import SecurityLogger
-from .exceptions import RateLimitError
+import os
+import threading
+import time
+from dataclasses import dataclass
+from datetime import datetime, timedelta
+from enum import Enum
+from typing import Any, Dict, List, Optional, Tuple
+
+import psutil
+
 from .events import EventManager, EventType
+from .exceptions import RateLimitError
+from .logger import SecurityLogger
 
 
 class RateLimitType(Enum):
@@ -327,8 +329,8 @@ def create_rate_limiter(
 
 if __name__ == "__main__":
     # Example usage
-    from .logger import setup_logging
     from .events import create_event_manager
+    from .logger import setup_logging
 
     security_logger, _ = setup_logging()
     event_manager = create_event_manager(security_logger)

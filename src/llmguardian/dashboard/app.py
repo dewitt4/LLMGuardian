@@ -1,26 +1,27 @@
 # src/llmguardian/dashboard/app.py
 
-import streamlit as st
+import os
+import sys
+from datetime import datetime, timedelta
+from pathlib import Path
+from typing import Any, Dict, List, Optional
+
+import numpy as np
+import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
-import pandas as pd
-import numpy as np
-from datetime import datetime, timedelta
-from typing import Dict, List, Any, Optional
-import sys
-import os
-from pathlib import Path
+import streamlit as st
 
 # Add parent directory to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 try:
     from llmguardian.core.config import Config
-    from llmguardian.data.privacy_guard import PrivacyGuard
-    from llmguardian.monitors.usage_monitor import UsageMonitor
-    from llmguardian.monitors.threat_detector import ThreatDetector, ThreatLevel
-    from llmguardian.scanners.prompt_injection_scanner import PromptInjectionScanner
     from llmguardian.core.logger import setup_logging
+    from llmguardian.data.privacy_guard import PrivacyGuard
+    from llmguardian.monitors.threat_detector import ThreatDetector, ThreatLevel
+    from llmguardian.monitors.usage_monitor import UsageMonitor
+    from llmguardian.scanners.prompt_injection_scanner import PromptInjectionScanner
 except ImportError:
     # Fallback for demo mode
     Config = None

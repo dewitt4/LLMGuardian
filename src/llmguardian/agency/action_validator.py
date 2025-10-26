@@ -1,7 +1,8 @@
 # src/llmguardian/agency/action_validator.py
-from typing import Dict, List, Optional
 from dataclasses import dataclass
 from enum import Enum
+from typing import Dict, List, Optional
+
 from ..core.logger import SecurityLogger
 
 

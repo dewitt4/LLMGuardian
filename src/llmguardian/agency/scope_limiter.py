@@ -1,7 +1,8 @@
 # src/llmguardian/agency/scope_limiter.py
-from typing import Dict, List, Optional, Set
 from dataclasses import dataclass
 from enum import Enum
+from typing import Dict, List, Optional, Set
+
 from ..core.logger import SecurityLogger
 
 

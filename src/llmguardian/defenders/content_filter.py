@@ -3,11 +3,12 @@ defenders/content_filter.py - Content filtering and moderation
 """
 
 import re
-from typing import Dict, List, Optional, Any, Set
 from dataclasses import dataclass
 from enum import Enum
-from ..core.logger import SecurityLogger
+from typing import Any, Dict, List, Optional, Set
+
 from ..core.exceptions import ValidationError
+from ..core.logger import SecurityLogger
 
 
 class ContentCategory(Enum):

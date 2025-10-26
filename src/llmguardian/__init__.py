@@ -7,12 +7,13 @@ __version__ = "1.4.0"
 __author__ = "dewitt4"
 __license__ = "Apache-2.0"
 
-from typing import List, Dict, Optional
+from typing import Dict, List, Optional
+
+from .core.config import Config
+from .core.logger import setup_logging
 
 # Package level imports
 from .scanners.prompt_injection_scanner import PromptInjectionScanner
-from .core.config import Config
-from .core.logger import setup_logging
 
 # Initialize logging
 setup_logging()

@@ -2,11 +2,12 @@
 monitors/behavior_monitor.py - LLM behavior monitoring
 """
 
-from typing import Dict, List, Optional, Any
 from dataclasses import dataclass
 from datetime import datetime
-from ..core.logger import SecurityLogger
+from typing import Any, Dict, List, Optional
+
 from ..core.exceptions import MonitoringError
+from ..core.logger import SecurityLogger
 
 
 @dataclass

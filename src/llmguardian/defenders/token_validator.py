@@ -2,13 +2,15 @@
 defenders/token_validator.py - Token and credential validation
 """
 
-from typing import Dict, Optional, Any, List
-from dataclasses import dataclass
 import re
-import jwt
+from dataclasses import dataclass
 from datetime import datetime, timedelta
-from ..core.logger import SecurityLogger
+from typing import Any, Dict, List, Optional
+
+import jwt
+
 from ..core.exceptions import TokenValidationError
+from ..core.logger import SecurityLogger
 
 
 @dataclass
