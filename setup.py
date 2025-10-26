@@ -102,7 +102,7 @@ setup(
         "test": TEST_DEPS,
         "dashboard": DASHBOARD_DEPS,
         "api": API_DEPS,
-        "all": DEV_DEPS + TEST_DEPS + DASHBOARD_DEPS + API_DEPS,
+        "all": DEV_DEPS + DASHBOARD_DEPS + API_DEPS,
     },
     
     # Entry points for CLI
