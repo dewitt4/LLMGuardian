@@ -18,11 +18,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # Copy requirements files
 COPY requirements/ /app/requirements/
-COPY requirements.txt /app/
+COPY requirements-full.txt /app/
 
 # Install Python dependencies
 RUN pip install --upgrade pip && \
-    pip install -r requirements.txt
+    pip install -r requirements-full.txt
 
 # Copy source code
 COPY src/ /app/src/

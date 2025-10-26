@@ -1,0 +1,21 @@
+# Root requirements.txt
+-r requirements/base.txt
+
+# CLI Dependencies
+click>=8.1.0
+rich>=13.0.0
+
+# Dashboard Dependencies
+streamlit>=1.28.0
+plotly>=5.17.0
+
+# Development Dependencies
+pytest>=7.0.0
+pytest-cov>=4.0.0
+black>=23.0.0
+flake8>=6.0.0
+
+# API Dependencies
+fastapi>=0.70.0
+uvicorn>=0.15.0
+gradio>=3.0.0
