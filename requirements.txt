@@ -1,10 +1,18 @@
-# LLMGuardian - Minimal Requirements for HuggingFace Space# Root requirements.txt
+# LLMGuardian - Minimal Requirements for HuggingFace Space# LLMGuardian - Minimal Requirements for HuggingFace Space# Root requirements.txt
+
+# For full installation, see requirements-full.txt and requirements/base.txt
 
 # For full installation, see requirements-full.txt and requirements/base.txt-r requirements/base.txt
 
+# Note: Gradio and uvicorn are installed by HuggingFace automatically
+
+# This file only needs to list additional dependencies
 
 
-# Note: Gradio and uvicorn are installed by HuggingFace automatically# CLI Dependencies
+
+# No additional dependencies needed for the demo Space# Note: Gradio and uvicorn are installed by HuggingFace automatically# CLI Dependencies
+
+# The app.py is standalone and only requires Gradio
 
 # This file only needs to list additional dependenciesclick>=8.1.0
 
