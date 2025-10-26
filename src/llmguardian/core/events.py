@@ -2,13 +2,14 @@
 core/events.py - Event handling system for LLMGuardian
 """
 
-from typing import Dict, List, Callable, Any, Optional
-from datetime import datetime
 import threading
 from dataclasses import dataclass
+from datetime import datetime
 from enum import Enum
-from .logger import SecurityLogger
+from typing import Any, Callable, Dict, List, Optional
+
 from .exceptions import LLMGuardianError
+from .logger import SecurityLogger
 
 
 class EventType(Enum):

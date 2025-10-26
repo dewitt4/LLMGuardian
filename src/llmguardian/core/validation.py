@@ -2,10 +2,11 @@
 core/validation.py - Input/Output validation for LLMGuardian
 """
 
-import re
-from typing import Dict, Any, List, Optional, Tuple
-from dataclasses import dataclass
 import json
+import re
+from dataclasses import dataclass
+from typing import Any, Dict, List, Optional, Tuple
+
 from .logger import SecurityLogger
 
 

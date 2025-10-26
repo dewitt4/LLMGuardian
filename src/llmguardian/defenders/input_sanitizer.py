@@ -3,10 +3,11 @@ defenders/input_sanitizer.py - Input sanitization for LLM inputs
 """
 
 import re
-from typing import Dict, Any, List, Optional
 from dataclasses import dataclass
-from ..core.logger import SecurityLogger
+from typing import Any, Dict, List, Optional
+
 from ..core.exceptions import ValidationError
+from ..core.logger import SecurityLogger
 
 
 @dataclass

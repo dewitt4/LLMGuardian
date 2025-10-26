@@ -2,15 +2,17 @@
 vectors/vector_scanner.py - Security scanner for vector databases and operations
 """
 
-import numpy as np
-from typing import Dict, List, Optional, Any, Set
+import hashlib
+from collections import defaultdict
 from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
-import hashlib
-from collections import defaultdict
-from ..core.logger import SecurityLogger
+from typing import Any, Dict, List, Optional, Set
+
+import numpy as np
+
 from ..core.exceptions import SecurityError
+from ..core.logger import SecurityLogger
 
 
 class VectorVulnerability(Enum):

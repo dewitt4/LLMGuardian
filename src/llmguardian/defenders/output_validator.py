@@ -3,10 +3,11 @@ defenders/output_validator.py - Output validation and sanitization
 """
 
 import re
-from typing import Dict, List, Optional, Set, Any
 from dataclasses import dataclass
-from ..core.logger import SecurityLogger
+from typing import Any, Dict, List, Optional, Set
+
 from ..core.exceptions import ValidationError
+from ..core.logger import SecurityLogger
 
 
 @dataclass

@@ -2,15 +2,16 @@
 monitors/performance_monitor.py - LLM performance monitoring
 """
 
-import time
 import threading
-from typing import Dict, List, Optional, Any
+import time
+from collections import deque
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 from statistics import mean, median, stdev
-from collections import deque
-from ..core.logger import SecurityLogger
+from typing import Any, Dict, List, Optional
+
 from ..core.exceptions import MonitoringError
+from ..core.logger import SecurityLogger
 
 
 @dataclass

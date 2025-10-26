@@ -2,13 +2,15 @@
 vectors/embedding_validator.py - Embedding validation and security
 """
 
-import numpy as np
-from typing import Dict, List, Optional, Any, Tuple
+import hashlib
 from dataclasses import dataclass
 from datetime import datetime
-import hashlib
-from ..core.logger import SecurityLogger
+from typing import Any, Dict, List, Optional, Tuple
+
+import numpy as np
+
 from ..core.exceptions import ValidationError
+from ..core.logger import SecurityLogger
 
 
 @dataclass

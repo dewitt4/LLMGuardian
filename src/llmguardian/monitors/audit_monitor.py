@@ -3,15 +3,16 @@ monitors/audit_monitor.py - Audit trail and compliance monitoring
 """
 
 import json
-from typing import Dict, List, Optional, Any, Set
+import threading
+from collections import defaultdict
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 from enum import Enum
-import threading
 from pathlib import Path
-from collections import defaultdict
-from ..core.logger import SecurityLogger
+from typing import Any, Dict, List, Optional, Set
+
 from ..core.exceptions import MonitoringError
+from ..core.logger import SecurityLogger
 
 
 class AuditEventType(Enum):

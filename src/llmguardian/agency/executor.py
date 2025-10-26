@@ -1,6 +1,7 @@
 # src/llmguardian/agency/executor.py
-from typing import Dict, Any, Optional
 from dataclasses import dataclass
+from typing import Any, Dict, Optional
+
 from ..core.logger import SecurityLogger
 from .action_validator import Action, ActionValidator
 from .permission_manager import PermissionManager

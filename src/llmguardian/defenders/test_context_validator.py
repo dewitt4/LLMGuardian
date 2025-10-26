@@ -2,10 +2,12 @@
 tests/defenders/test_context_validator.py - Tests for context validation
 """
 
-import pytest
 from datetime import datetime, timedelta
-from llmguardian.defenders.context_validator import ContextValidator, ValidationResult
+
+import pytest
+
 from llmguardian.core.exceptions import ValidationError
+from llmguardian.defenders.context_validator import ContextValidator, ValidationResult
 
 
 @pytest.fixture

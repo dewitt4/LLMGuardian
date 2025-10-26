@@ -2,14 +2,16 @@
 monitors/usage_monitor.py - Resource usage monitoring
 """
 
-import time
-import psutil
 import threading
-from typing import Dict, List, Optional
+import time
 from dataclasses import dataclass
 from datetime import datetime
-from ..core.logger import SecurityLogger
+from typing import Dict, List, Optional
+
+import psutil
+
 from ..core.exceptions import MonitoringError
+from ..core.logger import SecurityLogger
 
 
 @dataclass

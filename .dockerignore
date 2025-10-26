@@ -1,0 +1,105 @@
+# Git files
+.git
+.gitignore
+.gitattributes
+
+# GitHub
+.github
+
+# Python cache
+__pycache__
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Testing
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+test-results/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Documentation
+docs/_build/
+*.md
+!README.md
+
+# Local development files
+*.log
+*.db
+*.sqlite
+*.sqlite3
+.env.example
+
+# Jupyter
+.ipynb_checkpoints
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Docker
+docker-compose.yml
+Dockerfile
+dockerfile
+.dockerignore
+
+# CI/CD
+.travis.yml
+.gitlab-ci.yml
+azure-pipelines.yml
+
+# Other
+*.bak
+*.backup
+page/
+examples_dashboard.py
+demo_dashboard.py
+setup.sh
+run_dashboard.bat
+run_dashboard.ps1
+CNAME
+CHANGELOG.md
+CLAUDE.md
+CONTRIBUTING.md
+PROJECT.md

@@ -2,14 +2,15 @@
 monitors/threat_detector.py - Real-time threat detection for LLM applications
 """
 
-from typing import Dict, List, Optional, Set, Any
+import threading
+from collections import defaultdict
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 from enum import Enum
-import threading
-from collections import defaultdict
-from ..core.logger import SecurityLogger
+from typing import Any, Dict, List, Optional, Set
+
 from ..core.exceptions import MonitoringError
+from ..core.logger import SecurityLogger
 
 
 class ThreatLevel(Enum):

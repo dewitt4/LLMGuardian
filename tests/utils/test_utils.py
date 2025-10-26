@@ -4,7 +4,8 @@ tests/utils/test_utils.py - Testing utilities and helpers
 
 import json
 from pathlib import Path
-from typing import Dict, Any, Optional
+from typing import Any, Dict, Optional
+
 import numpy as np
 
 
