@@ -1606,3 +1606,557 @@ response = requests.post(
 Check status at: https://status.llmguardian.com # replace llmguardian.com with your domain
 
 Rate limits and API metrics available in dashboard.
+
+---
+
+## ☁️ Cloud Deployment Guides
+
+LLMGuardian can be deployed on all major cloud platforms. This section provides comprehensive deployment guides for AWS, Google Cloud, Azure, Vercel, and DigitalOcean.
+
+> **📘 For complete step-by-step instructions with all configuration details, see [PROJECT.md - Cloud Deployment Guides](../PROJECT.md#cloud-deployment-guides)**
+
+### Quick Start by Platform
+
+#### AWS Deployment
+
+**Recommended: ECS with Fargate**
+
+```bash
+# Push to ECR
+aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin YOUR_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com
+aws ecr create-repository --repository-name llmguardian --region us-east-1
+
+# Tag and push
+docker tag llmguardian:latest YOUR_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/llmguardian:latest
+docker push YOUR_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/llmguardian:latest
+
+# Create ECS cluster and deploy
+aws ecs create-cluster --cluster-name llmguardian-cluster --region us-east-1
+aws ecs register-task-definition --cli-input-json file://task-definition.json
+aws ecs create-service --cluster llmguardian-cluster --service-name llmguardian-service --task-definition llmguardian --desired-count 2
+```
+
+**Other AWS Options:**
+- **Lambda**: Serverless function deployment with Docker containers
+- **Elastic Beanstalk**: PaaS deployment with auto-scaling
+- **EKS**: Kubernetes orchestration for large-scale deployments
+
+**Key Features:**
+- Auto-scaling with CloudWatch metrics
+- Load balancing with ALB/NLB
+- Secrets management with Secrets Manager
+- CloudWatch logging and monitoring
+
+#### Google Cloud Platform
+
+**Recommended: Cloud Run**
+
+```bash
+# Configure Docker for GCP
+gcloud auth configure-docker
+
+# Build and push to GCR
+docker tag llmguardian:latest gcr.io/YOUR_PROJECT_ID/llmguardian:latest
+docker push gcr.io/YOUR_PROJECT_ID/llmguardian:latest
+
+# Deploy to Cloud Run
+gcloud run deploy llmguardian \
+  --image gcr.io/YOUR_PROJECT_ID/llmguardian:latest \
+  --platform managed \
+  --region us-central1 \
+  --allow-unauthenticated \
+  --memory 2Gi \
+  --cpu 2 \
+  --port 8000 \
+  --min-instances 1 \
+  --max-instances 10
+```
+
+**Other GCP Options:**
+- **GKE (Google Kubernetes Engine)**: Full Kubernetes control
+- **App Engine**: PaaS with automatic scaling
+- **Cloud Functions**: Event-driven serverless
+
+**Key Features:**
+- Automatic HTTPS and custom domains
+- Built-in auto-scaling
+- Secret Manager integration
+- Cloud Logging and Monitoring
+
+#### Microsoft Azure
+
+**Recommended: Container Instances**
+
+```bash
+# Create resource group and registry
+az group create --name llmguardian-rg --location eastus
+az acr create --resource-group llmguardian-rg --name llmguardianacr --sku Basic
+az acr login --name llmguardianacr
+
+# Push image
+docker tag llmguardian:latest llmguardianacr.azurecr.io/llmguardian:latest
+docker push llmguardianacr.azurecr.io/llmguardian:latest
+
+# Deploy container instance
+az container create \
+  --resource-group llmguardian-rg \
+  --name llmguardian-container \
+  --image llmguardianacr.azurecr.io/llmguardian:latest \
+  --cpu 2 \
+  --memory 4 \
+  --dns-name-label llmguardian \
+  --ports 8000 \
+  --environment-variables LOG_LEVEL=INFO
+```
+
+**Other Azure Options:**
+- **App Service**: Web App for Containers with built-in CI/CD
+- **AKS (Azure Kubernetes Service)**: Managed Kubernetes
+- **Azure Functions**: Serverless with Python support
+
+**Key Features:**
+- Azure Key Vault for secrets
+- Application Insights monitoring
+- Azure CDN integration
+- Auto-scaling capabilities
+
+#### Vercel Deployment
+
+**Serverless API Deployment**
+
+```bash
+# Install Vercel CLI
+npm i -g vercel
+
+# Login and deploy
+vercel login
+vercel --prod
+```
+
+**Configuration** (`vercel.json`):
+```json
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "src/llmguardian/api/app.py",
+      "use": "@vercel/python"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "src/llmguardian/api/app.py"
+    }
+  ],
+  "env": {
+    "LOG_LEVEL": "INFO",
+    "ENVIRONMENT": "production"
+  }
+}
+```
+
+**Key Features:**
+- Automatic HTTPS and custom domains
+- Edge network deployment
+- Environment variable management
+- GitHub integration for auto-deploy
+
+**Limitations:**
+- 10s execution time (Hobby), 60s (Pro)
+- Better for API routes than long-running processes
+
+#### DigitalOcean Deployment
+
+**Recommended: App Platform**
+
+```bash
+# Install doctl
+brew install doctl  # or download from DigitalOcean
+
+# Authenticate
+doctl auth init
+
+# Create app from spec
+doctl apps create --spec .do/app.yaml
+```
+
+**Configuration** (`.do/app.yaml`):
+```yaml
+name: llmguardian
+services:
+  - name: api
+    github:
+      repo: dewitt4/LLMGuardian
+      branch: main
+      deploy_on_push: true
+    dockerfile_path: docker/dockerfile
+    http_port: 8000
+    instance_count: 2
+    instance_size_slug: professional-s
+    routes:
+      - path: /
+    envs:
+      - key: LOG_LEVEL
+        value: INFO
+      - key: ENVIRONMENT
+        value: production
+    health_check:
+      http_path: /health
+```
+
+**Other DigitalOcean Options:**
+- **DOKS (DigitalOcean Kubernetes)**: Managed Kubernetes
+- **Droplets**: Traditional VMs with Docker
+
+**Key Features:**
+- Simple pricing and scaling
+- Built-in monitoring
+- Automatic HTTPS
+- GitHub integration
+
+### Platform Comparison
+
+| Feature | AWS | GCP | Azure | Vercel | DigitalOcean |
+|---------|-----|-----|-------|--------|--------------|
+| **Ease of Setup** | ⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ |
+| **Auto-Scaling** | Excellent | Excellent | Excellent | Automatic | Good |
+| **Cost (Monthly)** | $50-200 | $30-150 | $50-200 | $20-100 | $24-120 |
+| **Best For** | Enterprise | Startups | Enterprise | API/JAMstack | Simple Apps |
+| **Container Support** | ✅ ECS/EKS | ✅ Cloud Run/GKE | ✅ ACI/AKS | ❌ | ✅ App Platform |
+| **Serverless** | ✅ Lambda | ✅ Functions | ✅ Functions | ✅ Functions | Limited |
+| **Kubernetes** | ✅ EKS | ✅ GKE | ✅ AKS | ❌ | ✅ DOKS |
+| **Free Tier** | Yes | Yes | Yes | Yes | No |
+
+### Deployment Prerequisites
+
+Before deploying to any cloud platform:
+
+#### 1. Prepare Environment Configuration
+
+```bash
+# Copy and configure environment variables
+cp .env.example .env
+
+# Edit with your settings
+nano .env
+```
+
+Key variables to set:
+- `SECURITY_RISK_THRESHOLD`
+- `API_SERVER_PORT`
+- `LOG_LEVEL`
+- `ENVIRONMENT` (production, staging, development)
+- API keys and secrets
+
+#### 2. Build Docker Image
+
+```bash
+# Build from project root
+docker build -t llmguardian:latest -f docker/dockerfile .
+
+# Test locally
+docker run -p 8000:8000 --env-file .env llmguardian:latest
+```
+
+#### 3. Set Up Cloud CLI Tools
+
+**AWS:**
+```bash
+# Install AWS CLI
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+sudo ./aws/install
+
+# Configure credentials
+aws configure
+```
+
+**GCP:**
+```bash
+# Install gcloud SDK
+curl https://sdk.cloud.google.com | bash
+exec -l $SHELL
+
+# Authenticate
+gcloud init
+gcloud auth login
+```
+
+**Azure:**
+```bash
+# Install Azure CLI
+curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+
+# Login
+az login
+```
+
+**Vercel:**
+```bash
+# Install Vercel CLI
+npm i -g vercel
+
+# Login
+vercel login
+```
+
+**DigitalOcean:**
+```bash
+# Install doctl
+brew install doctl  # macOS
+# or download from https://github.com/digitalocean/doctl
+
+# Authenticate
+doctl auth init
+```
+
+#### 4. Configure Secrets Management
+
+**AWS Secrets Manager:**
+```bash
+aws secretsmanager create-secret \
+  --name llmguardian-api-key \
+  --secret-string "your-secret-key"
+```
+
+**GCP Secret Manager:**
+```bash
+echo -n "your-secret-key" | gcloud secrets create llmguardian-api-key --data-file=-
+```
+
+**Azure Key Vault:**
+```bash
+az keyvault create --name llmguardian-vault --resource-group llmguardian-rg
+az keyvault secret set --vault-name llmguardian-vault --name api-key --value "your-secret-key"
+```
+
+**Vercel:**
+```bash
+vercel env add API_KEY
+# Enter secret when prompted
+```
+
+**DigitalOcean:**
+```bash
+# Via App Platform dashboard or doctl
+doctl apps update YOUR_APP_ID --spec .do/app.yaml
+```
+
+### Best Practices for Cloud Deployment
+
+#### Security Hardening
+
+1. **Use Secret Managers**
+   - Never hardcode secrets in code or environment files
+   - Rotate secrets regularly
+   - Use least-privilege IAM roles
+
+2. **Enable HTTPS/TLS**
+   - Use cloud-provided certificates (free with most platforms)
+   - Force HTTPS redirects
+   - Configure SSL/TLS termination at load balancer
+
+3. **Implement WAF (Web Application Firewall)**
+   - AWS: AWS WAF
+   - Azure: Azure Application Gateway WAF
+   - GCP: Cloud Armor
+   - Vercel: Built-in DDoS protection
+   - DigitalOcean: Cloud Firewalls
+
+4. **Network Security**
+   - Configure VPCs/VNets for isolation
+   - Use security groups/firewall rules
+   - Implement least-privilege network policies
+
+#### Monitoring & Logging
+
+1. **Enable Cloud-Native Monitoring**
+   - AWS: CloudWatch
+   - GCP: Cloud Monitoring & Logging
+   - Azure: Application Insights
+   - Vercel: Analytics
+   - DigitalOcean: Built-in monitoring
+
+2. **Configure Alerts**
+   ```bash
+   # Example: AWS CloudWatch alarm
+   aws cloudwatch put-metric-alarm \
+     --alarm-name llmguardian-high-cpu \
+     --alarm-description "Alert when CPU exceeds 80%" \
+     --metric-name CPUUtilization \
+     --threshold 80
+   ```
+
+3. **Set Up Log Aggregation**
+   - Centralize logs for analysis
+   - Implement log retention policies
+   - Enable audit logging
+
+#### Performance Optimization
+
+1. **Auto-Scaling Configuration**
+   - Set appropriate min/max instances
+   - Configure based on CPU/memory metrics
+   - Implement graceful shutdown
+
+2. **Caching**
+   - Use Redis/Memcached for response caching
+   - Implement CDN for static content
+   - Cache embeddings and common queries
+
+3. **Database Optimization**
+   - Use managed database services
+   - Implement connection pooling
+   - Regular performance monitoring
+
+#### Cost Optimization
+
+1. **Right-Sizing**
+   - Start small and scale based on metrics
+   - Use spot/preemptible instances for non-critical workloads
+   - Monitor and optimize resource usage
+
+2. **Reserved Instances**
+   - Purchase reserved capacity for predictable workloads
+   - 1-year or 3-year commitments for savings
+
+3. **Cost Alerts**
+   ```bash
+   # AWS Budget alert
+   aws budgets create-budget \
+     --account-id YOUR_ACCOUNT_ID \
+     --budget file://budget.json
+   ```
+
+### CI/CD Integration
+
+**GitHub Actions Example** (`.github/workflows/deploy-cloud.yml`):
+
+```yaml
+name: Deploy to Cloud
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy-aws:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      
+      - name: Login to Amazon ECR
+        run: |
+          aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com
+      
+      - name: Build and push
+        run: |
+          docker build -t llmguardian:latest -f docker/dockerfile .
+          docker tag llmguardian:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com/llmguardian:latest
+          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com/llmguardian:latest
+      
+      - name: Deploy to ECS
+        run: |
+          aws ecs update-service --cluster llmguardian-cluster --service llmguardian-service --force-new-deployment
+
+  deploy-gcp:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: google-github-actions/setup-gcloud@v0
+        with:
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+      
+      - name: Deploy to Cloud Run
+        run: |
+          gcloud auth configure-docker
+          docker build -t llmguardian:latest -f docker/dockerfile .
+          docker tag llmguardian:latest gcr.io/${{ secrets.GCP_PROJECT_ID }}/llmguardian:latest
+          docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/llmguardian:latest
+          gcloud run deploy llmguardian --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/llmguardian:latest --region us-central1
+
+  deploy-azure:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      
+      - name: Deploy to Azure
+        run: |
+          az acr login --name llmguardianacr
+          docker build -t llmguardian:latest -f docker/dockerfile .
+          docker tag llmguardian:latest llmguardianacr.azurecr.io/llmguardian:latest
+          docker push llmguardianacr.azurecr.io/llmguardian:latest
+          az container restart --resource-group llmguardian-rg --name llmguardian-container
+```
+
+### Troubleshooting Common Issues
+
+#### Port Binding Issues
+```bash
+# Ensure correct port exposure
+docker run -p 8000:8000 llmguardian:latest
+
+# Check health endpoint
+curl http://localhost:8000/health
+```
+
+#### Memory/CPU Limits
+```bash
+# Increase container resources
+# AWS ECS: Update task definition
+# GCP Cloud Run: Use --memory and --cpu flags
+# Azure: Update container instance specs
+```
+
+#### Environment Variables Not Loading
+```bash
+# Verify environment variables
+docker run llmguardian:latest env | grep LOG_LEVEL
+
+# Check cloud secret access
+# AWS: Verify IAM role permissions
+# GCP: Check service account permissions
+# Azure: Verify Key Vault access policies
+```
+
+#### Image Pull Failures
+```bash
+# Authenticate with registry
+aws ecr get-login-password | docker login --username AWS --password-stdin YOUR_REGISTRY
+gcloud auth configure-docker
+az acr login --name YOUR_REGISTRY
+```
+
+### Additional Resources
+
+- **[PROJECT.md - Complete Cloud Deployment Guides](../PROJECT.md#cloud-deployment-guides)**: Full step-by-step instructions with all configuration details
+- **[Docker README](../docker/README.md)**: Docker-specific documentation
+- **[Environment Variables](.env.example)**: All configuration options
+- **[GitHub Actions Workflows](../.github/workflows/README.md)**: CI/CD automation
+
+### Support
+
+For deployment issues:
+1. Check the [GitHub Issues](https://github.com/dewitt4/LLMGuardian/issues)
+2. Review cloud provider documentation
+3. Enable debug logging: `LOG_LEVEL=DEBUG`
+4. Check health endpoint: `curl http://your-deployment/health`
+
+---
+
+**Ready to deploy? Choose your platform above and follow the deployment guide!** 🚀

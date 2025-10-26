@@ -301,6 +301,127 @@ docker run -p 8000:8000 \
 
 See [docker/README.md](docker/README.md) for complete Docker documentation.
 
+## ☁️ Cloud Deployment
+
+LLMGuardian can be deployed on all major cloud platforms. Below are quick start guides for each provider. For detailed step-by-step instructions, see [PROJECT.md - Cloud Deployment Guides](PROJECT.md#cloud-deployment-guides).
+
+### AWS Deployment
+
+**Option 1: ECS with Fargate (Recommended)**
+```bash
+# Push to ECR and deploy
+aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin YOUR_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com
+aws ecr create-repository --repository-name llmguardian
+docker tag llmguardian:latest YOUR_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/llmguardian:latest
+docker push YOUR_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/llmguardian:latest
+```
+
+**Other AWS Options:**
+- AWS Lambda with Docker containers
+- Elastic Beanstalk for PaaS deployment
+- EKS for Kubernetes orchestration
+
+### Google Cloud Platform
+
+**Cloud Run (Recommended)**
+```bash
+# Build and deploy to Cloud Run
+gcloud auth configure-docker
+docker tag llmguardian:latest gcr.io/YOUR_PROJECT_ID/llmguardian:latest
+docker push gcr.io/YOUR_PROJECT_ID/llmguardian:latest
+
+gcloud run deploy llmguardian \
+  --image gcr.io/YOUR_PROJECT_ID/llmguardian:latest \
+  --platform managed \
+  --region us-central1 \
+  --allow-unauthenticated \
+  --memory 2Gi \
+  --port 8000
+```
+
+**Other GCP Options:**
+- Google Kubernetes Engine (GKE)
+- App Engine for PaaS deployment
+
+### Microsoft Azure
+
+**Azure Container Instances**
+```bash
+# Create resource group and deploy
+az group create --name llmguardian-rg --location eastus
+az acr create --resource-group llmguardian-rg --name llmguardianacr --sku Basic
+az acr login --name llmguardianacr
+
+docker tag llmguardian:latest llmguardianacr.azurecr.io/llmguardian:latest
+docker push llmguardianacr.azurecr.io/llmguardian:latest
+
+az container create \
+  --resource-group llmguardian-rg \
+  --name llmguardian-container \
+  --image llmguardianacr.azurecr.io/llmguardian:latest \
+  --cpu 2 --memory 4 --ports 8000
+```
+
+**Other Azure Options:**
+- Azure App Service (Web App for Containers)
+- Azure Kubernetes Service (AKS)
+- Azure Functions
+
+### Vercel
+
+**Serverless Deployment**
+```bash
+# Install Vercel CLI and deploy
+npm i -g vercel
+vercel login
+vercel --prod
+```
+
+Create `vercel.json`:
+```json
+{
+  "version": 2,
+  "builds": [{"src": "src/llmguardian/api/app.py", "use": "@vercel/python"}],
+  "routes": [{"src": "/(.*)", "dest": "src/llmguardian/api/app.py"}]
+}
+```
+
+### DigitalOcean
+
+**App Platform (Easiest)**
+```bash
+# Using doctl CLI
+doctl auth init
+doctl apps create --spec .do/app.yaml
+```
+
+**Other DigitalOcean Options:**
+- DigitalOcean Kubernetes (DOKS)
+- Droplets with Docker
+
+### Platform Comparison
+
+| Platform | Best For | Ease of Setup | Estimated Cost |
+|----------|----------|---------------|----------------|
+| **GCP Cloud Run** | Startups, Auto-scaling | ⭐⭐⭐⭐⭐ Easy | $30-150/mo |
+| **AWS ECS** | Enterprise, Flexibility | ⭐⭐⭐ Medium | $50-200/mo |
+| **Azure ACI** | Microsoft Ecosystem | ⭐⭐⭐⭐ Easy | $50-200/mo |
+| **Vercel** | API Routes, Serverless | ⭐⭐⭐⭐⭐ Very Easy | $20-100/mo |
+| **DigitalOcean** | Simple, Predictable | ⭐⭐⭐⭐ Easy | $24-120/mo |
+
+### Prerequisites for Cloud Deployment
+
+Before deploying to any cloud:
+
+1. **Prepare Environment Variables**: Copy `.env.example` to `.env` and configure
+2. **Build Docker Image**: `docker build -t llmguardian:latest -f docker/dockerfile .`
+3. **Set Up Cloud CLI**: Install and authenticate with your chosen provider
+4. **Configure Secrets**: Use cloud secret managers (AWS Secrets Manager, Azure Key Vault, GCP Secret Manager)
+5. **Enable HTTPS**: Configure SSL/TLS certificates
+6. **Set Up Monitoring**: Enable cloud-native monitoring and logging
+
+For complete deployment guides with step-by-step instructions, configuration examples, and best practices, see **[PROJECT.md - Cloud Deployment Guides](PROJECT.md#cloud-deployment-guides)**.
+
 ## ⚙️ Configuration
 
 ### Environment Variables
