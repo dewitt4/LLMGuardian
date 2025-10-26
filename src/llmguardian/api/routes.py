@@ -9,6 +9,12 @@ from .security import verify_token
 router = APIRouter()
 
 
+@router.get("/health")
+async def health_check():
+    """Health check endpoint for container orchestration"""
+    return {"status": "healthy", "service": "llmguardian"}
+
+
 @router.post("/scan", response_model=SecurityResponse)
 async def scan_content(request: SecurityRequest, token: str = Depends(verify_token)):
     try:
