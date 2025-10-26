@@ -1,11 +1,19 @@
-# Root requirements.txt
--r requirements/base.txt
+# LLMGuardian - Minimal Requirements for HuggingFace Space# Root requirements.txt
 
-# CLI Dependencies
-click>=8.1.0
+# For full installation, see requirements-full.txt and requirements/base.txt-r requirements/base.txt
+
+
+
+# Note: Gradio and uvicorn are installed by HuggingFace automatically# CLI Dependencies
+
+# This file only needs to list additional dependenciesclick>=8.1.0
+
 rich>=13.0.0
 
-# Dashboard Dependencies
+# No additional dependencies needed for the demo Space
+
+# The app.py is standalone and only requires Gradio# Dashboard Dependencies
+
 streamlit>=1.28.0
 plotly>=5.17.0
 
