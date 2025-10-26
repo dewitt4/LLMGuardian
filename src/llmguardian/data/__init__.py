@@ -7,9 +7,4 @@ from .poison_detector import PoisonDetector
 from .privacy_guard import PrivacyGuard
 from .sanitizer import DataSanitizer
 
-__all__ = [
-    'LeakDetector',
-    'PoisonDetector',
-    'PrivacyGuard',
-    'DataSanitizer'
-]
+__all__ = ["LeakDetector", "PoisonDetector", "PrivacyGuard", "DataSanitizer"]

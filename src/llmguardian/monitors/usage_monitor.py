@@ -11,6 +11,7 @@ from datetime import datetime
 from ..core.logger import SecurityLogger
 from ..core.exceptions import MonitoringError
 
+
 @dataclass
 class ResourceMetrics:
     cpu_percent: float
@@ -19,6 +20,7 @@ class ResourceMetrics:
     network_io: Dict[str, int]
     timestamp: datetime
 
+
 class UsageMonitor:
     def __init__(self, security_logger: Optional[SecurityLogger] = None):
         self.security_logger = security_logger
@@ -26,7 +28,7 @@ class UsageMonitor:
         self.thresholds = {
             "cpu_percent": 80.0,
             "memory_percent": 85.0,
-            "disk_usage": 90.0
+            "disk_usage": 90.0,
         }
         self._monitoring = False
         self._monitor_thread = None
@@ -34,9 +36,7 @@ class UsageMonitor:
     def start_monitoring(self, interval: int = 60):
         self._monitoring = True
         self._monitor_thread = threading.Thread(
-            target=self._monitor_loop,
-            args=(interval,),
-            daemon=True
+            target=self._monitor_loop, args=(interval,), daemon=True
         )
         self._monitor_thread.start()
 
@@ -55,20 +55,19 @@ class UsageMonitor:
             except Exception as e:
                 if self.security_logger:
                     self.security_logger.log_security_event(
-                        "monitoring_error",
-                        error=str(e)
+                        "monitoring_error", error=str(e)
                     )
 
     def _collect_metrics(self) -> ResourceMetrics:
         return ResourceMetrics(
             cpu_percent=psutil.cpu_percent(),
             memory_percent=psutil.virtual_memory().percent,
-            disk_usage=psutil.disk_usage('/').percent,
+            disk_usage=psutil.disk_usage("/").percent,
             network_io={
                 "bytes_sent": psutil.net_io_counters().bytes_sent,
-                "bytes_recv": psutil.net_io_counters().bytes_recv
+                "bytes_recv": psutil.net_io_counters().bytes_recv,
             },
-            timestamp=datetime.utcnow()
+            timestamp=datetime.utcnow(),
         )
 
     def _check_thresholds(self, metrics: ResourceMetrics):
@@ -80,7 +79,7 @@ class UsageMonitor:
                         "resource_threshold_exceeded",
                         metric=metric,
                         value=value,
-                        threshold=threshold
+                        threshold=threshold,
                     )
 
     def get_current_usage(self) -> Dict:
@@ -90,7 +89,7 @@ class UsageMonitor:
             "memory_percent": metrics.memory_percent,
             "disk_usage": metrics.disk_usage,
             "network_io": metrics.network_io,
-            "timestamp": metrics.timestamp.isoformat()
+            "timestamp": metrics.timestamp.isoformat(),
         }
 
     def get_metrics_history(self) -> List[Dict]:
@@ -100,7 +99,7 @@ class UsageMonitor:
                 "memory_percent": m.memory_percent,
                 "disk_usage": m.disk_usage,
                 "network_io": m.network_io,
-                "timestamp": m.timestamp.isoformat()
+                "timestamp": m.timestamp.isoformat(),
             }
             for m in self.metrics_history
         ]

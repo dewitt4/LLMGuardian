@@ -11,11 +11,13 @@ from collections import defaultdict
 from ..core.logger import SecurityLogger
 from ..core.exceptions import MonitoringError
 
+
 class ThreatLevel(Enum):
     LOW = "low"
     MEDIUM = "medium"
     HIGH = "high"
     CRITICAL = "critical"
+
 
 class ThreatCategory(Enum):
     PROMPT_INJECTION = "prompt_injection"
@@ -24,6 +26,7 @@ class ThreatCategory(Enum):
     POISONING = "poisoning"
     DOS = "denial_of_service"
     UNAUTHORIZED_ACCESS = "unauthorized_access"
+
 
 @dataclass
 class Threat:
@@ -35,6 +38,7 @@ class Threat:
     indicators: Dict[str, Any]
     context: Optional[Dict[str, Any]] = None
 
+
 @dataclass
 class ThreatRule:
     category: ThreatCategory
@@ -42,6 +46,7 @@ class ThreatRule:
     threshold: float
     cooldown: int  # seconds
     level: ThreatLevel
+
 
 class ThreatDetector:
     def __init__(self, security_logger: Optional[SecurityLogger] = None):
@@ -52,7 +57,7 @@ class ThreatDetector:
             ThreatLevel.LOW: 0.3,
             ThreatLevel.MEDIUM: 0.5,
             ThreatLevel.HIGH: 0.7,
-            ThreatLevel.CRITICAL: 0.9
+            ThreatLevel.CRITICAL: 0.9,
         }
         self.detection_history = defaultdict(list)
         self._lock = threading.Lock()
@@ -64,53 +69,49 @@ class ThreatDetector:
                 indicators=[
                     "system prompt manipulation",
                     "instruction override",
-                    "delimiter injection"
+                    "delimiter injection",
                 ],
                 threshold=0.7,
                 cooldown=300,
-                level=ThreatLevel.HIGH
+                level=ThreatLevel.HIGH,
             ),
             "data_leak": ThreatRule(
                 category=ThreatCategory.DATA_LEAKAGE,
                 indicators=[
                     "sensitive data exposure",
                     "credential leak",
-                    "system information disclosure"
+                    "system information disclosure",
                 ],
                 threshold=0.8,
                 cooldown=600,
-                level=ThreatLevel.CRITICAL
+                level=ThreatLevel.CRITICAL,
             ),
             "dos_attack": ThreatRule(
                 category=ThreatCategory.DOS,
-                indicators=[
-                    "rapid requests",
-                    "resource exhaustion",
-                    "token depletion"
-                ],
+                indicators=["rapid requests", "resource exhaustion", "token depletion"],
                 threshold=0.6,
                 cooldown=120,
-                level=ThreatLevel.MEDIUM
+                level=ThreatLevel.MEDIUM,
             ),
             "poisoning_attempt": ThreatRule(
                 category=ThreatCategory.POISONING,
                 indicators=[
                     "malicious training data",
                     "model manipulation",
-                    "adversarial input"
+                    "adversarial input",
                 ],
                 threshold=0.75,
                 cooldown=900,
-                level=ThreatLevel.HIGH
-            )
+                level=ThreatLevel.HIGH,
+            ),
         }
 
-    def detect_threats(self, 
-                      data: Dict[str, Any], 
-                      context: Optional[Dict[str, Any]] = None) -> List[Threat]:
+    def detect_threats(
+        self, data: Dict[str, Any], context: Optional[Dict[str, Any]] = None
+    ) -> List[Threat]:
         try:
             detected_threats = []
-            
+
             with self._lock:
                 for rule_name, rule in self.rules.items():
                     if self._is_in_cooldown(rule_name):
@@ -125,7 +126,7 @@ class ThreatDetector:
                             source=data.get("source", "unknown"),
                             timestamp=datetime.utcnow(),
                             indicators={"confidence": confidence},
-                            context=context
+                            context=context,
                         )
                         detected_threats.append(threat)
                         self.threats.append(threat)
@@ -137,7 +138,7 @@ class ThreatDetector:
                                 rule=rule_name,
                                 confidence=confidence,
                                 level=rule.level.value,
-                                category=rule.category.value
+                                category=rule.category.value,
                             )
 
             return detected_threats
@@ -145,8 +146,7 @@ class ThreatDetector:
         except Exception as e:
             if self.security_logger:
                 self.security_logger.log_security_event(
-                    "threat_detection_error",
-                    error=str(e)
+                    "threat_detection_error", error=str(e)
                 )
             raise MonitoringError(f"Threat detection failed: {str(e)}")
 
@@ -163,7 +163,7 @@ class ThreatDetector:
     def _is_in_cooldown(self, rule_name: str) -> bool:
         if rule_name not in self.detection_history:
             return False
-        
+
         last_detection = self.detection_history[rule_name][-1]
         cooldown = self.rules[rule_name].cooldown
         return (datetime.utcnow() - last_detection).seconds < cooldown
@@ -173,13 +173,14 @@ class ThreatDetector:
         # Keep only last 24 hours
         cutoff = datetime.utcnow() - timedelta(hours=24)
         self.detection_history[rule_name] = [
-            dt for dt in self.detection_history[rule_name]
-            if dt > cutoff
+            dt for dt in self.detection_history[rule_name] if dt > cutoff
         ]
 
-    def get_active_threats(self, 
-                         min_level: ThreatLevel = ThreatLevel.LOW,
-                         category: Optional[ThreatCategory] = None) -> List[Dict[str, Any]]:
+    def get_active_threats(
+        self,
+        min_level: ThreatLevel = ThreatLevel.LOW,
+        category: Optional[ThreatCategory] = None,
+    ) -> List[Dict[str, Any]]:
         return [
             {
                 "category": threat.category.value,
@@ -187,11 +188,11 @@ class ThreatDetector:
                 "description": threat.description,
                 "source": threat.source,
                 "timestamp": threat.timestamp.isoformat(),
-                "indicators": threat.indicators
+                "indicators": threat.indicators,
             }
             for threat in self.threats
-            if threat.level.value >= min_level.value and
-            (category is None or threat.category == category)
+            if threat.level.value >= min_level.value
+            and (category is None or threat.category == category)
         ]
 
     def add_rule(self, name: str, rule: ThreatRule):
@@ -215,7 +216,7 @@ class ThreatDetector:
             "detection_history": {
                 name: len(detections)
                 for name, detections in self.detection_history.items()
-            }
+            },
         }
 
         for threat in self.threats:
