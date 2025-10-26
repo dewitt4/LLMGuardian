@@ -10,7 +10,7 @@ authors = [{name = "dewitt4"}]
 license = {file = "LICENSE"}
 readme = "README.md"
 requires-python = ">=3.8"
-dynamic = ["keywords", "scripts"]
+dynamic = ["keywords"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
