@@ -13,40 +13,43 @@ from collections import defaultdict
 from ..core.logger import SecurityLogger
 from ..core.exceptions import MonitoringError
 
+
 class AuditEventType(Enum):
     # Authentication events
     LOGIN = "login"
     LOGOUT = "logout"
     AUTH_FAILURE = "auth_failure"
-    
+
     # Access events
     ACCESS_GRANTED = "access_granted"
     ACCESS_DENIED = "access_denied"
     PERMISSION_CHANGE = "permission_change"
-    
+
     # Data events
     DATA_ACCESS = "data_access"
     DATA_MODIFICATION = "data_modification"
     DATA_DELETION = "data_deletion"
-    
+
     # System events
     CONFIG_CHANGE = "config_change"
     SYSTEM_ERROR = "system_error"
     SECURITY_ALERT = "security_alert"
-    
+
     # Model events
     MODEL_ACCESS = "model_access"
     MODEL_UPDATE = "model_update"
     PROMPT_INJECTION = "prompt_injection"
-    
+
     # Compliance events
     COMPLIANCE_CHECK = "compliance_check"
     POLICY_VIOLATION = "policy_violation"
     DATA_BREACH = "data_breach"
 
+
 @dataclass
 class AuditEvent:
     """Representation of an audit event"""
+
     event_type: AuditEventType
     timestamp: datetime
     user_id: str
@@ -58,20 +61,28 @@ class AuditEvent:
     session_id: Optional[str] = None
     ip_address: Optional[str] = None
 
+
 @dataclass
 class CompliancePolicy:
     """Definition of a compliance policy"""
+
     name: str
     description: str
     required_events: Set[AuditEventType]
     retention_period: timedelta
     alert_threshold: int
 
+
 class AuditMonitor:
-    def __init__(self, security_logger: Optional[SecurityLogger] = None,
-                 audit_dir: Optional[str] = None):
+    def __init__(
+        self,
+        security_logger: Optional[SecurityLogger] = None,
+        audit_dir: Optional[str] = None,
+    ):
         self.security_logger = security_logger
-        self.audit_dir = Path(audit_dir) if audit_dir else Path.home() / ".llmguardian" / "audit"
+        self.audit_dir = (
+            Path(audit_dir) if audit_dir else Path.home() / ".llmguardian" / "audit"
+        )
         self.events: List[AuditEvent] = []
         self.policies = self._initialize_policies()
         self.compliance_status = defaultdict(list)
@@ -96,10 +107,10 @@ class AuditMonitor:
                 required_events={
                     AuditEventType.DATA_ACCESS,
                     AuditEventType.DATA_MODIFICATION,
-                    AuditEventType.DATA_DELETION
+                    AuditEventType.DATA_DELETION,
                 },
                 retention_period=timedelta(days=90),
-                alert_threshold=5
+                alert_threshold=5,
             ),
             "authentication_monitoring": CompliancePolicy(
                 name="Authentication Monitoring",
@@ -107,10 +118,10 @@ class AuditMonitor:
                 required_events={
                     AuditEventType.LOGIN,
                     AuditEventType.LOGOUT,
-                    AuditEventType.AUTH_FAILURE
+                    AuditEventType.AUTH_FAILURE,
                 },
                 retention_period=timedelta(days=30),
-                alert_threshold=3
+                alert_threshold=3,
             ),
             "security_compliance": CompliancePolicy(
                 name="Security Compliance",
@@ -118,11 +129,11 @@ class AuditMonitor:
                 required_events={
                     AuditEventType.SECURITY_ALERT,
                     AuditEventType.PROMPT_INJECTION,
-                    AuditEventType.DATA_BREACH
+                    AuditEventType.DATA_BREACH,
                 },
                 retention_period=timedelta(days=365),
-                alert_threshold=1
-            )
+                alert_threshold=1,
+            ),
         }
 
     def log_event(self, event: AuditEvent):
@@ -138,14 +149,13 @@ class AuditMonitor:
                         "audit_event_logged",
                         event_type=event.event_type.value,
                         user_id=event.user_id,
-                        action=event.action
+                        action=event.action,
                     )
 
         except Exception as e:
             if self.security_logger:
                 self.security_logger.log_security_event(
-                    "audit_logging_error",
-                    error=str(e)
+                    "audit_logging_error", error=str(e)
                 )
             raise MonitoringError(f"Failed to log audit event: {str(e)}")
 
@@ -154,7 +164,7 @@ class AuditMonitor:
         try:
             timestamp = event.timestamp.strftime("%Y%m%d")
             file_path = self.audit_dir / "events" / f"audit_{timestamp}.jsonl"
-            
+
             event_data = {
                 "event_type": event.event_type.value,
                 "timestamp": event.timestamp.isoformat(),
@@ -165,11 +175,11 @@ class AuditMonitor:
                 "details": event.details,
                 "metadata": event.metadata,
                 "session_id": event.session_id,
-                "ip_address": event.ip_address
+                "ip_address": event.ip_address,
             }
-            
-            with open(file_path, 'a') as f:
-                f.write(json.dumps(event_data) + '\n')
+
+            with open(file_path, "a") as f:
+                f.write(json.dumps(event_data) + "\n")
 
         except Exception as e:
             raise MonitoringError(f"Failed to write audit event: {str(e)}")
@@ -179,30 +189,33 @@ class AuditMonitor:
         for policy_name, policy in self.policies.items():
             if event.event_type in policy.required_events:
                 self.compliance_status[policy_name].append(event)
-                
+
                 # Check for violations
                 recent_events = [
-                    e for e in self.compliance_status[policy_name]
+                    e
+                    for e in self.compliance_status[policy_name]
                     if datetime.utcnow() - e.timestamp < timedelta(hours=24)
                 ]
-                
+
                 if len(recent_events) >= policy.alert_threshold:
                     if self.security_logger:
                         self.security_logger.log_security_event(
                             "compliance_threshold_exceeded",
                             policy=policy_name,
-                            events_count=len(recent_events)
+                            events_count=len(recent_events),
                         )
 
-    def get_events(self, 
-                  event_type: Optional[AuditEventType] = None,
-                  start_time: Optional[datetime] = None,
-                  end_time: Optional[datetime] = None,
-                  user_id: Optional[str] = None) -> List[Dict[str, Any]]:
+    def get_events(
+        self,
+        event_type: Optional[AuditEventType] = None,
+        start_time: Optional[datetime] = None,
+        end_time: Optional[datetime] = None,
+        user_id: Optional[str] = None,
+    ) -> List[Dict[str, Any]]:
         """Get filtered audit events"""
         with self._lock:
             events = self.events
-            
+
             if event_type:
                 events = [e for e in events if e.event_type == event_type]
             if start_time:
@@ -220,7 +233,7 @@ class AuditMonitor:
                     "action": e.action,
                     "resource": e.resource,
                     "status": e.status,
-                    "details": e.details
+                    "details": e.details,
                 }
                 for e in events
             ]
@@ -232,14 +245,14 @@ class AuditMonitor:
 
         policy = self.policies[policy_name]
         events = self.compliance_status[policy_name]
-        
+
         report = {
             "policy_name": policy.name,
             "description": policy.description,
             "generated_at": datetime.utcnow().isoformat(),
             "total_events": len(events),
             "events_by_type": defaultdict(int),
-            "violations": []
+            "violations": [],
         }
 
         for event in events:
@@ -252,8 +265,12 @@ class AuditMonitor:
                     f"Missing required event type: {required_event.value}"
                 )
 
-        report_path = self.audit_dir / "reports" / f"compliance_{policy_name}_{datetime.utcnow().strftime('%Y%m%d')}.json"
-        with open(report_path, 'w') as f:
+        report_path = (
+            self.audit_dir
+            / "reports"
+            / f"compliance_{policy_name}_{datetime.utcnow().strftime('%Y%m%d')}.json"
+        )
+        with open(report_path, "w") as f:
             json.dump(report, f, indent=2)
 
         return report
@@ -275,10 +292,11 @@ class AuditMonitor:
             for policy in self.policies.values():
                 cutoff = datetime.utcnow() - policy.retention_period
                 self.events = [e for e in self.events if e.timestamp >= cutoff]
-                
+
                 if policy.name in self.compliance_status:
                     self.compliance_status[policy.name] = [
-                        e for e in self.compliance_status[policy.name]
+                        e
+                        for e in self.compliance_status[policy.name]
                         if e.timestamp >= cutoff
                     ]
 
@@ -289,7 +307,7 @@ class AuditMonitor:
             "events_by_type": defaultdict(int),
             "events_by_user": defaultdict(int),
             "policy_status": {},
-            "recent_violations": []
+            "recent_violations": [],
         }
 
         for event in self.events:
@@ -299,15 +317,20 @@ class AuditMonitor:
         for policy_name, policy in self.policies.items():
             events = self.compliance_status[policy_name]
             recent_events = [
-                e for e in events
+                e
+                for e in events
                 if datetime.utcnow() - e.timestamp < timedelta(hours=24)
             ]
-            
+
             stats["policy_status"][policy_name] = {
                 "total_events": len(events),
                 "recent_events": len(recent_events),
                 "violation_threshold": policy.alert_threshold,
-                "status": "violation" if len(recent_events) >= policy.alert_threshold else "compliant"
+                "status": (
+                    "violation"
+                    if len(recent_events) >= policy.alert_threshold
+                    else "compliant"
+                ),
             }
 
         return stats

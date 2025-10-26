@@ -7,7 +7,7 @@ from .security import SecurityMiddleware
 app = FastAPI(
     title="LLMGuardian API",
     description="Security API for LLM applications",
-    version="1.0.0"
+    version="1.0.0",
 )
 
 # Security middleware

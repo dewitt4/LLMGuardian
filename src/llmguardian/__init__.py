@@ -20,13 +20,16 @@ setup_logging()
 # Version information tuple
 VERSION = tuple(map(int, __version__.split(".")))
 
+
 def get_version() -> str:
     """Return the version string."""
     return __version__
 
+
 def get_scanner() -> PromptInjectionScanner:
     """Get a configured instance of the prompt injection scanner."""
     return PromptInjectionScanner()
+
 
 # Export commonly used classes
 __all__ = [
