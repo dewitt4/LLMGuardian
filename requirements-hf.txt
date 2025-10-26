@@ -1,0 +1,7 @@
+# HuggingFace Space Requirements
+# Lightweight requirements for demo deployment
+
+# Essential dependencies only
+gradio>=4.44.0
+pyyaml>=6.0.1
+requests>=2.31.0
