@@ -66,10 +66,10 @@ api = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/dewitt4/LLMGuardian"
+Homepage = "https://github.com/dewitt4/llmguardian"
 Documentation = "https://llmguardian.readthedocs.io"
-Repository = "https://github.com/dewitt4/LLMGuardian.git"
-Issues = "https://github.com/dewitt4/LLMGuardian/issues"
+Repository = "https://github.com/dewitt4/llmguardian.git"
+Issues = "https://github.com/dewitt4/llmguardian/issues"
 
 [project.scripts]
 llmguardian = "llmguardian.cli.main:cli"

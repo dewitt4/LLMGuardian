@@ -1787,7 +1787,7 @@ name: llmguardian
 services:
   - name: api
     github:
-      repo: dewitt4/LLMGuardian
+      repo: dewitt4/llmguardian
       branch: main
       deploy_on_push: true
     dockerfile_path: docker/dockerfile
