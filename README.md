@@ -27,7 +27,7 @@ Comprehensive LLM AI Model protection toolset aligned to addressing OWASP vulner
 
 Watch the LLMGuardian demonstration and walkthrough:
 
-[![LLMGuardian Demo](https://img.youtube.com/vi/vzMJXuoS-ko/maxresdefault.jpg)](https://youtu.be/vzMJXuoS-ko?si=umzS-6eqKl8mMtY_)
+[LLMGuardian Demo](https://youtu.be/vzMJXuoS-ko?si=umzS-6eqKl8mMtY_)
 
 **Author:** [DeWitt Gibson](https://www.linkedin.com/in/dewitt-gibson/)
 
