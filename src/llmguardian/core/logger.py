@@ -2,12 +2,13 @@
 core/logger.py - Logging configuration for LLMGuardian
 """
 
+import json
 import logging
 import logging.handlers
-import json
 from datetime import datetime
 from pathlib import Path
-from typing import Optional, Dict, Any
+from typing import Any, Dict, Optional
+
 
 class SecurityLogger:
     """Custom logger for security events"""
@@ -24,14 +25,14 @@ class SecurityLogger:
         logger = logging.getLogger("llmguardian.security")
         logger.setLevel(logging.INFO)
         formatter = logging.Formatter(
-            '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+            "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
         )
-        
+
         # Console handler
         console_handler = logging.StreamHandler()
         console_handler.setFormatter(formatter)
         logger.addHandler(console_handler)
-        
+
         return logger
 
     def _setup_file_handler(self) -> None:
@@ -40,23 +41,21 @@ class SecurityLogger:
         file_handler = logging.handlers.RotatingFileHandler(
             Path(self.log_path) / "security.log",
             maxBytes=10485760,  # 10MB
-            backupCount=5
+            backupCount=5,
         )
-        file_handler.setFormatter(logging.Formatter(
-            '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-        ))
+        file_handler.setFormatter(
+            logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+        )
         self.logger.addHandler(file_handler)
 
     def _setup_security_handler(self) -> None:
         """Set up security-specific logging handler"""
         security_handler = logging.handlers.RotatingFileHandler(
-            Path(self.log_path) / "audit.log",
-            maxBytes=10485760,
-            backupCount=10
+            Path(self.log_path) / "audit.log", maxBytes=10485760, backupCount=10
         )
-        security_handler.setFormatter(logging.Formatter(
-            '%(asctime)s - %(levelname)s - %(message)s'
-        ))
+        security_handler.setFormatter(
+            logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
+        )
         self.logger.addHandler(security_handler)
 
     def _format_log_entry(self, event_type: str, data: Dict[str, Any]) -> str:
@@ -64,7 +63,7 @@ class SecurityLogger:
         entry = {
             "timestamp": datetime.utcnow().isoformat(),
             "event_type": event_type,
-            "data": data
+            "data": data,
         }
         return json.dumps(entry)
 
@@ -75,15 +74,16 @@ class SecurityLogger:
 
     def log_attack(self, attack_type: str, details: Dict[str, Any]) -> None:
         """Log detected attack"""
-        self.log_security_event("attack_detected", 
-                              attack_type=attack_type, 
-                              details=details)
+        self.log_security_event(
+            "attack_detected", attack_type=attack_type, details=details
+        )
 
     def log_validation(self, validation_type: str, result: Dict[str, Any]) -> None:
         """Log validation result"""
-        self.log_security_event("validation_result", 
-                              validation_type=validation_type, 
-                              result=result)
+        self.log_security_event(
+            "validation_result", validation_type=validation_type, result=result
+        )
+
 
 class AuditLogger:
     """Logger for audit events"""
@@ -98,38 +98,43 @@ class AuditLogger:
         """Set up audit logger"""
         logger = logging.getLogger("llmguardian.audit")
         logger.setLevel(logging.INFO)
-        
+
         handler = logging.handlers.RotatingFileHandler(
-            Path(self.log_path) / "audit.log",
-            maxBytes=10485760,
-            backupCount=10
+            Path(self.log_path) / "audit.log", maxBytes=10485760, backupCount=10
         )
-        formatter = logging.Formatter(
-            '%(asctime)s - AUDIT - %(message)s'
-        )
+        formatter = logging.Formatter("%(asctime)s - AUDIT - %(message)s")
         handler.setFormatter(formatter)
         logger.addHandler(handler)
-        
+
         return logger
 
     def log_access(self, user: str, resource: str, action: str) -> None:
         """Log access event"""
-        self.logger.info(json.dumps({
-            "event_type": "access",
-            "user": user,
-            "resource": resource,
-            "action": action,
-            "timestamp": datetime.utcnow().isoformat()
-        }))
+        self.logger.info(
+            json.dumps(
+                {
+                    "event_type": "access",
+                    "user": user,
+                    "resource": resource,
+                    "action": action,
+                    "timestamp": datetime.utcnow().isoformat(),
+                }
+            )
+        )
 
     def log_configuration_change(self, user: str, changes: Dict[str, Any]) -> None:
         """Log configuration changes"""
-        self.logger.info(json.dumps({
-            "event_type": "config_change",
-            "user": user,
-            "changes": changes,
-            "timestamp": datetime.utcnow().isoformat()
-        }))
+        self.logger.info(
+            json.dumps(
+                {
+                    "event_type": "config_change",
+                    "user": user,
+                    "changes": changes,
+                    "timestamp": datetime.utcnow().isoformat(),
+                }
+            )
+        )
+
 
 def setup_logging(log_path: Optional[str] = None) -> tuple[SecurityLogger, AuditLogger]:
     """Setup both security and audit logging"""

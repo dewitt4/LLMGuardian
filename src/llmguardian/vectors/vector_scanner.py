@@ -2,18 +2,22 @@
 vectors/vector_scanner.py - Security scanner for vector databases and operations
 """
 
-import numpy as np
-from typing import Dict, List, Optional, Any, Set
+import hashlib
+from collections import defaultdict
 from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
-import hashlib
-from collections import defaultdict
-from ..core.logger import SecurityLogger
+from typing import Any, Dict, List, Optional, Set
+
+import numpy as np
+
 from ..core.exceptions import SecurityError
+from ..core.logger import SecurityLogger
+
 
 class VectorVulnerability(Enum):
     """Types of vector-related vulnerabilities"""
+
     POISONED_VECTORS = "poisoned_vectors"
     MALICIOUS_PAYLOAD = "malicious_payload"
     DATA_LEAKAGE = "data_leakage"
@@ -23,17 +27,21 @@ class VectorVulnerability(Enum):
     SIMILARITY_MANIPULATION = "similarity_manipulation"
     INDEX_POISONING = "index_poisoning"
 
+
 @dataclass
 class ScanTarget:
     """Definition of a scan target"""
+
     vectors: np.ndarray
     metadata: Optional[Dict[str, Any]] = None
     index_data: Optional[Dict[str, Any]] = None
     source: Optional[str] = None
 
+
 @dataclass
 class VulnerabilityReport:
     """Detailed vulnerability report"""
+
     vulnerability_type: VectorVulnerability
     severity: int  # 1-10
     affected_indices: List[int]
@@ -41,17 +49,20 @@ class VulnerabilityReport:
     recommendations: List[str]
     metadata: Dict[str, Any]
 
+
 @dataclass
 class ScanResult:
     """Result of a vector database scan"""
+
     vulnerabilities: List[VulnerabilityReport]
     statistics: Dict[str, Any]
     timestamp: datetime
     scan_duration: float
 
+
 class VectorScanner:
     """Scanner for vector-related security issues"""
-    
+
     def __init__(self, security_logger: Optional[SecurityLogger] = None):
         self.security_logger = security_logger
         self.vulnerability_patterns = self._initialize_patterns()
@@ -63,20 +74,25 @@ class VectorScanner:
             "clustering": {
                 "min_cluster_size": 10,
                 "isolation_threshold": 0.3,
-                "similarity_threshold": 0.85
+                "similarity_threshold": 0.85,
             },
             "metadata": {
                 "required_fields": {"timestamp", "source", "dimension"},
                 "sensitive_patterns": {
-                    r"password", r"secret", r"key", r"token",
-                    r"credential", r"auth", r"\bpii\b"
-                }
+                    r"password",
+                    r"secret",
+                    r"key",
+                    r"token",
+                    r"credential",
+                    r"auth",
+                    r"\bpii\b",
+                },
             },
             "poisoning": {
                 "variance_threshold": 0.1,
                 "outlier_threshold": 2.0,
-                "minimum_samples": 5
-            }
+                "minimum_samples": 5,
+            },
         }
 
     def scan_vectors(self, target: ScanTarget) -> ScanResult:
@@ -108,7 +124,9 @@ class VectorScanner:
             clustering_report = self._check_clustering_attacks(target)
             if clustering_report:
                 vulnerabilities.append(clustering_report)
-                statistics["clustering_attacks"] = len(clustering_report.affected_indices)
+                statistics["clustering_attacks"] = len(
+                    clustering_report.affected_indices
+                )
 
             # Check metadata
             metadata_report = self._check_metadata_tampering(target)
@@ -122,7 +140,7 @@ class VectorScanner:
                 vulnerabilities=vulnerabilities,
                 statistics=dict(statistics),
                 timestamp=datetime.utcnow(),
-                scan_duration=scan_duration
+                scan_duration=scan_duration,
             )
 
             # Log scan results
@@ -130,7 +148,7 @@ class VectorScanner:
                 self.security_logger.log_security_event(
                     "vector_scan_completed",
                     vulnerability_count=len(vulnerabilities),
-                    statistics=statistics
+                    statistics=statistics,
                 )
 
             self.scan_history.append(result)
@@ -139,12 +157,13 @@ class VectorScanner:
         except Exception as e:
             if self.security_logger:
                 self.security_logger.log_security_event(
-                    "vector_scan_error",
-                    error=str(e)
+                    "vector_scan_error", error=str(e)
                 )
             raise SecurityError(f"Vector scan failed: {str(e)}")
 
-    def _check_vector_poisoning(self, target: ScanTarget) -> Optional[VulnerabilityReport]:
+    def _check_vector_poisoning(
+        self, target: ScanTarget
+    ) -> Optional[VulnerabilityReport]:
         """Check for poisoned vectors"""
         affected_indices = []
         vectors = target.vectors
@@ -170,26 +189,32 @@ class VectorScanner:
                 recommendations=[
                     "Remove or quarantine affected vectors",
                     "Implement stronger validation for new vectors",
-                    "Monitor vector statistics regularly"
+                    "Monitor vector statistics regularly",
                 ],
                 metadata={
                     "mean_distance": float(mean_distance),
                     "std_distance": float(std_distance),
-                    "threshold_used": float(threshold)
-                }
+                    "threshold_used": float(threshold),
+                },
             )
         return None
 
-    def _check_malicious_payloads(self, target: ScanTarget) -> Optional[VulnerabilityReport]:
+    def _check_malicious_payloads(
+        self, target: ScanTarget
+    ) -> Optional[VulnerabilityReport]:
         """Check for malicious payloads in metadata"""
         if not target.metadata:
             return None
 
         affected_indices = []
         suspicious_patterns = {
-            r"eval\(", r"exec\(", r"system\(",  # Code execution
-            r"<script", r"javascript:",  # XSS
-            r"DROP TABLE", r"DELETE FROM",  # SQL injection
+            r"eval\(",
+            r"exec\(",
+            r"system\(",  # Code execution
+            r"<script",
+            r"javascript:",  # XSS
+            r"DROP TABLE",
+            r"DELETE FROM",  # SQL injection
             r"\\x[0-9a-fA-F]+",  # Encoded content
         }
 
@@ -210,11 +235,9 @@ class VectorScanner:
                 recommendations=[
                     "Sanitize metadata before storage",
                     "Implement strict metadata validation",
-                    "Use allowlist for metadata fields"
+                    "Use allowlist for metadata fields",
                 ],
-                metadata={
-                    "patterns_checked": list(suspicious_patterns)
-                }
+                metadata={"patterns_checked": list(suspicious_patterns)},
             )
         return None
 
@@ -224,7 +247,9 @@ class VectorScanner:
             return None
 
         affected_indices = []
-        sensitive_patterns = self.vulnerability_patterns["metadata"]["sensitive_patterns"]
+        sensitive_patterns = self.vulnerability_patterns["metadata"][
+            "sensitive_patterns"
+        ]
 
         for idx, metadata in enumerate(target.metadata):
             for key, value in metadata.items():
@@ -243,15 +268,15 @@ class VectorScanner:
                 recommendations=[
                     "Remove or encrypt sensitive information",
                     "Implement data masking",
-                    "Review metadata handling policies"
+                    "Review metadata handling policies",
                 ],
-                metadata={
-                    "sensitive_patterns": list(sensitive_patterns)
-                }
+                metadata={"sensitive_patterns": list(sensitive_patterns)},
             )
         return None
 
-    def _check_clustering_attacks(self, target: ScanTarget) -> Optional[VulnerabilityReport]:
+    def _check_clustering_attacks(
+        self, target: ScanTarget
+    ) -> Optional[VulnerabilityReport]:
         """Check for potential clustering-based attacks"""
         vectors = target.vectors
         affected_indices = []
@@ -280,17 +305,19 @@ class VectorScanner:
                 recommendations=[
                     "Review clustered vectors for legitimacy",
                     "Implement diversity requirements",
-                    "Monitor clustering patterns"
+                    "Monitor clustering patterns",
                 ],
                 metadata={
                     "similarity_threshold": threshold,
                     "min_cluster_size": min_cluster_size,
-                    "cluster_count": len(affected_indices)
-                }
+                    "cluster_count": len(affected_indices),
+                },
             )
         return None
 
-    def _check_metadata_tampering(self, target: ScanTarget) -> Optional[VulnerabilityReport]:
+    def _check_metadata_tampering(
+        self, target: ScanTarget
+    ) -> Optional[VulnerabilityReport]:
         """Check for metadata tampering"""
         if not target.metadata:
             return None
@@ -305,9 +332,9 @@ class VectorScanner:
                 continue
 
             # Check for timestamp consistency
-            if 'timestamp' in metadata:
+            if "timestamp" in metadata:
                 try:
-                    ts = datetime.fromisoformat(str(metadata['timestamp']))
+                    ts = datetime.fromisoformat(str(metadata["timestamp"]))
                     if ts > datetime.utcnow():
                         affected_indices.append(idx)
                 except (ValueError, TypeError):
@@ -322,12 +349,12 @@ class VectorScanner:
                 recommendations=[
                     "Validate metadata integrity",
                     "Implement metadata signing",
-                    "Monitor metadata changes"
+                    "Monitor metadata changes",
                 ],
                 metadata={
                     "required_fields": list(required_fields),
-                    "affected_count": len(affected_indices)
-                }
+                    "affected_count": len(affected_indices),
+                },
             )
         return None
 
@@ -338,7 +365,7 @@ class VectorScanner:
                 "timestamp": result.timestamp.isoformat(),
                 "vulnerability_count": len(result.vulnerabilities),
                 "statistics": result.statistics,
-                "scan_duration": result.scan_duration
+                "scan_duration": result.scan_duration,
             }
             for result in self.scan_history
         ]

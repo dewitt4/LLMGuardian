@@ -1,21 +1,25 @@
 # src/llmguardian/agency/action_validator.py
-from typing import Dict, List, Optional
 from dataclasses import dataclass
 from enum import Enum
+from typing import Dict, List, Optional
+
 from ..core.logger import SecurityLogger
+
 
 class ActionType(Enum):
     READ = "read"
-    WRITE = "write" 
+    WRITE = "write"
     DELETE = "delete"
     EXECUTE = "execute"
     MODIFY = "modify"
 
-@dataclass 
+
+@dataclass
 class Action:
     type: ActionType
     resource: str
     parameters: Optional[Dict] = None
+
 
 class ActionValidator:
     def __init__(self, security_logger: Optional[SecurityLogger] = None):

@@ -3,11 +3,13 @@ defenders/content_filter.py - Content filtering and moderation
 """
 
 import re
-from typing import Dict, List, Optional, Any, Set
 from dataclasses import dataclass
 from enum import Enum
-from ..core.logger import SecurityLogger
+from typing import Any, Dict, List, Optional, Set
+
 from ..core.exceptions import ValidationError
+from ..core.logger import SecurityLogger
+
 
 class ContentCategory(Enum):
     MALICIOUS = "malicious"
@@ -15,6 +17,7 @@ class ContentCategory(Enum):
     HARMFUL = "harmful"
     INAPPROPRIATE = "inappropriate"
     POTENTIAL_EXPLOIT = "potential_exploit"
+
 
 @dataclass
 class FilterRule:
@@ -25,6 +28,7 @@ class FilterRule:
     action: str  # "block" or "sanitize"
     replacement: str = "[FILTERED]"
 
+
 @dataclass
 class FilterResult:
     is_allowed: bool
@@ -33,6 +37,7 @@ class FilterResult:
     risk_score: int
     categories: Set[ContentCategory]
     details: Dict[str, Any]
+
 
 class ContentFilter:
     def __init__(self, security_logger: Optional[SecurityLogger] = None):
@@ -50,21 +55,21 @@ class ContentFilter:
                 category=ContentCategory.MALICIOUS,
                 severity=9,
                 description="Code execution attempt",
-                action="block"
+                action="block",
             ),
             "sql_commands": FilterRule(
                 pattern=r"(?:SELECT|INSERT|UPDATE|DELETE|DROP|UNION)\s+(?:FROM|INTO|TABLE)",
                 category=ContentCategory.MALICIOUS,
                 severity=8,
                 description="SQL command",
-                action="block"
+                action="block",
             ),
             "file_operations": FilterRule(
                 pattern=r"(?:read|write|open|delete|remove)\s*\(['\"].*?['\"]",
                 category=ContentCategory.POTENTIAL_EXPLOIT,
                 severity=7,
                 description="File operation",
-                action="block"
+                action="block",
             ),
             "pii_data": FilterRule(
                 pattern=r"\b\d{3}-\d{2}-\d{4}\b|\b\d{16}\b",
@@ -72,25 +77,27 @@ class ContentFilter:
                 severity=8,
                 description="PII data",
                 action="sanitize",
-                replacement="[REDACTED]"
+                replacement="[REDACTED]",
             ),
             "harmful_content": FilterRule(
                 pattern=r"(?:hack|exploit|bypass|vulnerability)\s+(?:system|security|protection)",
                 category=ContentCategory.HARMFUL,
                 severity=7,
                 description="Potentially harmful content",
-                action="block"
+                action="block",
             ),
             "inappropriate_content": FilterRule(
                 pattern=r"(?:explicit|offensive|inappropriate).*content",
                 category=ContentCategory.INAPPROPRIATE,
                 severity=6,
                 description="Inappropriate content",
-                action="sanitize"
+                action="sanitize",
             ),
         }
 
-    def filter_content(self, content: str, context: Optional[Dict[str, Any]] = None) -> FilterResult:
+    def filter_content(
+        self, content: str, context: Optional[Dict[str, Any]] = None
+    ) -> FilterResult:
         try:
             matched_rules = []
             categories = set()
@@ -122,8 +129,8 @@ class ContentFilter:
                     "original_length": len(content),
                     "filtered_length": len(filtered),
                     "rule_matches": len(matched_rules),
-                    "context": context or {}
-                }
+                    "context": context or {},
+                },
             )
 
             if matched_rules and self.security_logger:
@@ -132,7 +139,7 @@ class ContentFilter:
                     matched_rules=matched_rules,
                     categories=[c.value for c in categories],
                     risk_score=risk_score,
-                    is_allowed=is_allowed
+                    is_allowed=is_allowed,
                 )
 
             return result
@@ -140,15 +147,15 @@ class ContentFilter:
         except Exception as e:
             if self.security_logger:
                 self.security_logger.log_security_event(
-                    "filter_error",
-                    error=str(e),
-                    content_length=len(content)
+                    "filter_error", error=str(e), content_length=len(content)
                 )
             raise ValidationError(f"Content filtering failed: {str(e)}")
 
     def add_rule(self, name: str, rule: FilterRule) -> None:
         self.rules[name] = rule
-        self.compiled_rules[name] = re.compile(rule.pattern, re.IGNORECASE | re.MULTILINE)
+        self.compiled_rules[name] = re.compile(
+            rule.pattern, re.IGNORECASE | re.MULTILINE
+        )
 
     def remove_rule(self, name: str) -> None:
         self.rules.pop(name, None)
@@ -161,7 +168,7 @@ class ContentFilter:
                 "category": rule.category.value,
                 "severity": rule.severity,
                 "description": rule.description,
-                "action": rule.action
+                "action": rule.action,
             }
             for name, rule in self.rules.items()
         }

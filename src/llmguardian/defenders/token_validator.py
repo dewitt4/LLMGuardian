@@ -2,13 +2,16 @@
 defenders/token_validator.py - Token and credential validation
 """
 
-from typing import Dict, Optional, Any, List
-from dataclasses import dataclass
 import re
-import jwt
+from dataclasses import dataclass
 from datetime import datetime, timedelta
-from ..core.logger import SecurityLogger
+from typing import Any, Dict, List, Optional
+
+import jwt
+
 from ..core.exceptions import TokenValidationError
+from ..core.logger import SecurityLogger
+
 
 @dataclass
 class TokenRule:
@@ -19,12 +22,14 @@ class TokenRule:
     required_chars: str
     expiry_time: int  # in seconds
 
+
 @dataclass
 class TokenValidationResult:
     is_valid: bool
     errors: List[str]
     metadata: Dict[str, Any]
     expiry: Optional[datetime]
+
 
 class TokenValidator:
     def __init__(self, security_logger: Optional[SecurityLogger] = None):
@@ -40,7 +45,7 @@ class TokenValidator:
                 min_length=32,
                 max_length=4096,
                 required_chars=".-_",
-                expiry_time=3600
+                expiry_time=3600,
             ),
             "api_key": TokenRule(
                 pattern=r"^[A-Za-z0-9]{32,64}$",
@@ -48,7 +53,7 @@ class TokenValidator:
                 min_length=32,
                 max_length=64,
                 required_chars="",
-                expiry_time=86400
+                expiry_time=86400,
             ),
             "session_token": TokenRule(
                 pattern=r"^[A-Fa-f0-9]{64}$",
@@ -56,8 +61,8 @@ class TokenValidator:
                 min_length=64,
                 max_length=64,
                 required_chars="",
-                expiry_time=7200
-            )
+                expiry_time=7200,
+            ),
         }
 
     def _load_secret_key(self) -> bytes:
@@ -75,7 +80,9 @@ class TokenValidator:
 
             # Length validation
             if len(token) < rule.min_length or len(token) > rule.max_length:
-                errors.append(f"Token length must be between {rule.min_length} and {rule.max_length}")
+                errors.append(
+                    f"Token length must be between {rule.min_length} and {rule.max_length}"
+                )
 
             # Pattern validation
             if not re.match(rule.pattern, token):
@@ -103,23 +110,20 @@ class TokenValidator:
 
             if not is_valid and self.security_logger:
                 self.security_logger.log_security_event(
-                    "token_validation_failure",
-                    token_type=token_type,
-                    errors=errors
+                    "token_validation_failure", token_type=token_type, errors=errors
                 )
 
             return TokenValidationResult(
                 is_valid=is_valid,
                 errors=errors,
                 metadata=metadata,
-                expiry=expiry if is_valid else None
+                expiry=expiry if is_valid else None,
             )
 
         except Exception as e:
             if self.security_logger:
                 self.security_logger.log_security_event(
-                    "token_validation_error",
-                    error=str(e)
+                    "token_validation_error", error=str(e)
                 )
             raise TokenValidationError(f"Validation failed: {str(e)}")
 
@@ -136,12 +140,13 @@ class TokenValidator:
                 return jwt.encode(payload, self.secret_key, algorithm="HS256")
 
             # Add other token type creation logic here
-            raise TokenValidationError(f"Token creation not implemented for {token_type}")
+            raise TokenValidationError(
+                f"Token creation not implemented for {token_type}"
+            )
 
         except Exception as e:
             if self.security_logger:
                 self.security_logger.log_security_event(
-                    "token_creation_error",
-                    error=str(e)
+                    "token_creation_error", error=str(e)
                 )
             raise TokenValidationError(f"Token creation failed: {str(e)}")

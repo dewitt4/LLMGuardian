@@ -2,18 +2,21 @@
 data/leak_detector.py - Data leakage detection and prevention
 """
 
+import hashlib
 import re
-from typing import Dict, List, Optional, Any, Set
+from collections import defaultdict
 from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
-import hashlib
-from collections import defaultdict
-from ..core.logger import SecurityLogger
+from typing import Any, Dict, List, Optional, Set
+
 from ..core.exceptions import SecurityError
+from ..core.logger import SecurityLogger
+
 
 class LeakageType(Enum):
     """Types of data leakage"""
+
     PII = "personally_identifiable_information"
     CREDENTIALS = "credentials"
     API_KEYS = "api_keys"
@@ -23,9 +26,11 @@ class LeakageType(Enum):
     SOURCE_CODE = "source_code"
     MODEL_INFO = "model_information"
 
+
 @dataclass
 class LeakagePattern:
     """Pattern for detecting data leakage"""
+
     pattern: str
     type: LeakageType
     severity: int  # 1-10
@@ -33,9 +38,11 @@ class LeakagePattern:
     remediation: str
     enabled: bool = True
 
+
 @dataclass
 class ScanResult:
     """Result of leak detection scan"""
+
     has_leaks: bool
     leaks: List[Dict[str, Any]]
     severity: int
@@ -43,9 +50,10 @@ class ScanResult:
     remediation_steps: List[str]
     metadata: Dict[str, Any]
 
+
 class LeakDetector:
     """Detector for sensitive data leakage"""
-    
+
     def __init__(self, security_logger: Optional[SecurityLogger] = None):
         self.security_logger = security_logger
         self.patterns = self._initialize_patterns()
@@ -60,78 +68,78 @@ class LeakDetector:
                 type=LeakageType.PII,
                 severity=7,
                 description="Email address detection",
-                remediation="Mask or remove email addresses"
+                remediation="Mask or remove email addresses",
             ),
             "ssn": LeakagePattern(
                 pattern=r"\b\d{3}-?\d{2}-?\d{4}\b",
                 type=LeakageType.PII,
                 severity=9,
                 description="Social Security Number detection",
-                remediation="Remove or encrypt SSN"
+                remediation="Remove or encrypt SSN",
             ),
             "credit_card": LeakagePattern(
                 pattern=r"\b\d{4}[- ]?\d{4}[- ]?\d{4}[- ]?\d{4}\b",
                 type=LeakageType.PII,
                 severity=9,
                 description="Credit card number detection",
-                remediation="Remove or encrypt credit card numbers"
+                remediation="Remove or encrypt credit card numbers",
             ),
             "api_key": LeakagePattern(
                 pattern=r"\b([A-Za-z0-9_-]{32,})\b",
                 type=LeakageType.API_KEYS,
                 severity=8,
                 description="API key detection",
-                remediation="Remove API keys and rotate compromised keys"
+                remediation="Remove API keys and rotate compromised keys",
             ),
             "password": LeakagePattern(
                 pattern=r"(?i)(password|passwd|pwd)\s*[=:]\s*\S+",
                 type=LeakageType.CREDENTIALS,
                 severity=9,
                 description="Password detection",
-                remediation="Remove passwords and reset compromised credentials"
+                remediation="Remove passwords and reset compromised credentials",
             ),
             "internal_url": LeakagePattern(
                 pattern=r"https?://[a-zA-Z0-9.-]+\.internal\b",
                 type=LeakageType.INTERNAL_DATA,
                 severity=6,
                 description="Internal URL detection",
-                remediation="Remove internal URLs"
+                remediation="Remove internal URLs",
             ),
             "ip_address": LeakagePattern(
                 pattern=r"\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b",
                 type=LeakageType.SYSTEM_INFO,
                 severity=5,
                 description="IP address detection",
-                remediation="Remove or mask IP addresses"
+                remediation="Remove or mask IP addresses",
             ),
             "aws_key": LeakagePattern(
                 pattern=r"AKIA[0-9A-Z]{16}",
                 type=LeakageType.CREDENTIALS,
                 severity=9,
                 description="AWS key detection",
-                remediation="Remove AWS keys and rotate credentials"
+                remediation="Remove AWS keys and rotate credentials",
             ),
             "private_key": LeakagePattern(
                 pattern=r"-----BEGIN\s+PRIVATE\s+KEY-----",
                 type=LeakageType.CREDENTIALS,
                 severity=10,
                 description="Private key detection",
-                remediation="Remove private keys and rotate affected keys"
+                remediation="Remove private keys and rotate affected keys",
             ),
             "model_info": LeakagePattern(
                 pattern=r"model\.(safetensors|bin|pt|pth|ckpt)",
                 type=LeakageType.MODEL_INFO,
                 severity=7,
                 description="Model file reference detection",
-                remediation="Remove model file references"
+                remediation="Remove model file references",
             ),
             "database_connection": LeakagePattern(
                 pattern=r"(?i)(jdbc|mongodb|postgresql):.*",
                 type=LeakageType.SYSTEM_INFO,
                 severity=8,
                 description="Database connection string detection",
-                remediation="Remove database connection strings"
-            )
+                remediation="Remove database connection strings",
+            ),
         }
 
     def _compile_patterns(self) -> Dict[str, re.Pattern]:
@@ -142,9 +150,9 @@ class LeakDetector:
             if pattern.enabled
         }
 
-    def scan_text(self, 
-                  text: str,
-                  context: Optional[Dict[str, Any]] = None) -> ScanResult:
+    def scan_text(
+        self, text: str, context: Optional[Dict[str, Any]] = None
+    ) -> ScanResult:
         """Scan text for potential data leaks"""
         try:
             leaks = []
@@ -168,7 +176,7 @@ class LeakDetector:
                             "match": self._mask_sensitive_data(match.group()),
                             "position": match.span(),
                             "description": leak_pattern.description,
-                            "remediation": leak_pattern.remediation
+                            "remediation": leak_pattern.remediation,
                         }
                         leaks.append(leak)
 
@@ -182,8 +190,8 @@ class LeakDetector:
                     "timestamp": datetime.utcnow().isoformat(),
                     "context": context or {},
                     "total_leaks": len(leaks),
-                    "scan_coverage": len(self.compiled_patterns)
-                }
+                    "scan_coverage": len(self.compiled_patterns),
+                },
             )
 
             if result.has_leaks and self.security_logger:
@@ -191,7 +199,7 @@ class LeakDetector:
                     "data_leak_detected",
                     leak_count=len(leaks),
                     severity=max_severity,
-                    affected_data=list(affected_data)
+                    affected_data=list(affected_data),
                 )
 
             self.detection_history.append(result)
@@ -200,8 +208,7 @@ class LeakDetector:
         except Exception as e:
             if self.security_logger:
                 self.security_logger.log_security_event(
-                    "leak_detection_error",
-                    error=str(e)
+                    "leak_detection_error", error=str(e)
                 )
             raise SecurityError(f"Leak detection failed: {str(e)}")
 
@@ -232,7 +239,7 @@ class LeakDetector:
             "total_leaks": sum(len(r.leaks) for r in self.detection_history),
             "leak_types": defaultdict(int),
             "severity_distribution": defaultdict(int),
-            "pattern_matches": defaultdict(int)
+            "pattern_matches": defaultdict(int),
         }
 
         for result in self.detection_history:
@@ -251,24 +258,22 @@ class LeakDetector:
         trends = {
             "leak_frequency": [],
             "severity_trends": [],
-            "type_distribution": defaultdict(list)
+            "type_distribution": defaultdict(list),
         }
 
         # Group by day for trend analysis
-        daily_stats = defaultdict(lambda: {
-            "leaks": 0,
-            "severity": [],
-            "types": defaultdict(int)
-        })
+        daily_stats = defaultdict(
+            lambda: {"leaks": 0, "severity": [], "types": defaultdict(int)}
+        )
 
         for result in self.detection_history:
-            date = datetime.fromisoformat(
-                result.metadata["timestamp"]
-            ).date().isoformat()
-            
+            date = (
+                datetime.fromisoformat(result.metadata["timestamp"]).date().isoformat()
+            )
+
             daily_stats[date]["leaks"] += len(result.leaks)
             daily_stats[date]["severity"].append(result.severity)
-            
+
             for leak in result.leaks:
                 daily_stats[date]["types"][leak["type"]] += 1
 
@@ -276,24 +281,23 @@ class LeakDetector:
         dates = sorted(daily_stats.keys())
         for date in dates:
             stats = daily_stats[date]
-            trends["leak_frequency"].append({
-                "date": date,
-                "count": stats["leaks"]
-            })
-            
-            trends["severity_trends"].append({
-                "date": date,
-                "average_severity": (
-                    sum(stats["severity"]) / len(stats["severity"])
-                    if stats["severity"] else 0
-                )
-            })
-            
-            for leak_type, count in stats["types"].items():
-                trends["type_distribution"][leak_type].append({
+            trends["leak_frequency"].append({"date": date, "count": stats["leaks"]})
+
+            trends["severity_trends"].append(
+                {
                     "date": date,
-                    "count": count
-                })
+                    "average_severity": (
+                        sum(stats["severity"]) / len(stats["severity"])
+                        if stats["severity"]
+                        else 0
+                    ),
+                }
+            )
+
+            for leak_type, count in stats["types"].items():
+                trends["type_distribution"][leak_type].append(
+                    {"date": date, "count": count}
+                )
 
         return trends
 
@@ -303,24 +307,23 @@ class LeakDetector:
             return []
 
         # Aggregate issues by type
-        issues = defaultdict(lambda: {
-            "count": 0,
-            "severity": 0,
-            "remediation_steps": set(),
-            "examples": []
-        })
+        issues = defaultdict(
+            lambda: {
+                "count": 0,
+                "severity": 0,
+                "remediation_steps": set(),
+                "examples": [],
+            }
+        )
 
         for result in self.detection_history:
             for leak in result.leaks:
                 leak_type = leak["type"]
                 issues[leak_type]["count"] += 1
                 issues[leak_type]["severity"] = max(
-                    issues[leak_type]["severity"],
-                    leak["severity"]
+                    issues[leak_type]["severity"], leak["severity"]
                 )
-                issues[leak_type]["remediation_steps"].add(
-                    leak["remediation"]
-                )
+                issues[leak_type]["remediation_steps"].add(leak["remediation"])
                 if len(issues[leak_type]["examples"]) < 3:
                     issues[leak_type]["examples"].append(leak["match"])
 
@@ -332,8 +335,11 @@ class LeakDetector:
                 "severity": data["severity"],
                 "remediation_steps": list(data["remediation_steps"]),
                 "examples": data["examples"],
-                "priority": "high" if data["severity"] >= 8 else
-                          "medium" if data["severity"] >= 5 else "low"
+                "priority": (
+                    "high"
+                    if data["severity"] >= 8
+                    else "medium" if data["severity"] >= 5 else "low"
+                ),
             }
             for leak_type, data in issues.items()
         ]

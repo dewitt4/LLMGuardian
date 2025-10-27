@@ -3,10 +3,12 @@ defenders/input_sanitizer.py - Input sanitization for LLM inputs
 """
 
 import re
-from typing import Dict, Any, List, Optional
 from dataclasses import dataclass
-from ..core.logger import SecurityLogger
+from typing import Any, Dict, List, Optional
+
 from ..core.exceptions import ValidationError
+from ..core.logger import SecurityLogger
+
 
 @dataclass
 class SanitizationRule:
@@ -15,6 +17,7 @@ class SanitizationRule:
     description: str
     enabled: bool = True
 
+
 @dataclass
 class SanitizationResult:
     original: str
@@ -22,6 +25,7 @@ class SanitizationResult:
     applied_rules: List[str]
     is_modified: bool
     risk_level: str
+
 
 class InputSanitizer:
     def __init__(self, security_logger: Optional[SecurityLogger] = None):
@@ -38,31 +42,33 @@ class InputSanitizer:
             "system_instructions": SanitizationRule(
                 pattern=r"system:\s*|instruction:\s*",
                 replacement=" ",
-                description="Remove system instruction markers"
+                description="Remove system instruction markers",
             ),
             "code_injection": SanitizationRule(
                 pattern=r"<script.*?>.*?</script>",
                 replacement="",
-                description="Remove script tags"
+                description="Remove script tags",
             ),
             "delimiter_injection": SanitizationRule(
                 pattern=r"[<\[{](?:system|prompt|instruction)[>\]}]",
                 replacement="",
-                description="Remove delimiter-based injections"
+                description="Remove delimiter-based injections",
             ),
             "command_injection": SanitizationRule(
                 pattern=r"(?:exec|eval|system)\s*\(",
                 replacement="",
-                description="Remove command execution attempts"
+                description="Remove command execution attempts",
             ),
             "encoding_patterns": SanitizationRule(
                 pattern=r"(?:base64|hex|rot13)\s*\(",
                 replacement="",
-                description="Remove encoding attempts"
+                description="Remove encoding attempts",
             ),
         }
 
-    def sanitize(self, input_text: str, context: Optional[Dict[str, Any]] = None) -> SanitizationResult:
+    def sanitize(
+        self, input_text: str, context: Optional[Dict[str, Any]] = None
+    ) -> SanitizationResult:
         original = input_text
         applied_rules = []
         is_modified = False
@@ -91,7 +97,7 @@ class InputSanitizer:
                     original_length=len(original),
                     sanitized_length=len(sanitized),
                     applied_rules=applied_rules,
-                    risk_level=risk_level
+                    risk_level=risk_level,
                 )
 
             return SanitizationResult(
@@ -99,15 +105,13 @@ class InputSanitizer:
                 sanitized=sanitized,
                 applied_rules=applied_rules,
                 is_modified=is_modified,
-                risk_level=risk_level
+                risk_level=risk_level,
             )
 
         except Exception as e:
             if self.security_logger:
                 self.security_logger.log_security_event(
-                    "sanitization_error",
-                    error=str(e),
-                    input_length=len(input_text)
+                    "sanitization_error", error=str(e), input_length=len(input_text)
                 )
             raise ValidationError(f"Sanitization failed: {str(e)}")
 
@@ -123,7 +127,9 @@ class InputSanitizer:
     def add_rule(self, name: str, rule: SanitizationRule) -> None:
         self.rules[name] = rule
         if rule.enabled:
-            self.compiled_rules[name] = re.compile(rule.pattern, re.IGNORECASE | re.MULTILINE)
+            self.compiled_rules[name] = re.compile(
+                rule.pattern, re.IGNORECASE | re.MULTILINE
+            )
 
     def remove_rule(self, name: str) -> None:
         self.rules.pop(name, None)
@@ -135,7 +141,7 @@ class InputSanitizer:
                 "pattern": rule.pattern,
                 "replacement": rule.replacement,
                 "description": rule.description,
-                "enabled": rule.enabled
+                "enabled": rule.enabled,
             }
             for name, rule in self.rules.items()
         }

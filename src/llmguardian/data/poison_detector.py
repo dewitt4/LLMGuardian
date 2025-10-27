@@ -2,19 +2,23 @@
 data/poison_detector.py - Detection and prevention of data poisoning attacks
 """
 
-import numpy as np
-from typing import Dict, List, Optional, Any, Set, Tuple
+import hashlib
+import json
+from collections import defaultdict
 from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
-from collections import defaultdict
-import json
-import hashlib
-from ..core.logger import SecurityLogger
+from typing import Any, Dict, List, Optional, Set, Tuple
+
+import numpy as np
+
 from ..core.exceptions import SecurityError
+from ..core.logger import SecurityLogger
+
 
 class PoisonType(Enum):
     """Types of data poisoning attacks"""
+
     LABEL_FLIPPING = "label_flipping"
     BACKDOOR = "backdoor"
     CLEAN_LABEL = "clean_label"
@@ -23,9 +27,11 @@ class PoisonType(Enum):
     ADVERSARIAL = "adversarial"
     SEMANTIC = "semantic"
 
+
 @dataclass
 class PoisonPattern:
     """Pattern for detecting poisoning attempts"""
+
     name: str
     description: str
     indicators: List[str]
@@ -34,17 +40,21 @@ class PoisonPattern:
     threshold: float
     enabled: bool = True
 
+
 @dataclass
 class DataPoint:
     """Individual data point for analysis"""
+
     content: Any
     metadata: Dict[str, Any]
     embedding: Optional[np.ndarray] = None
     label: Optional[str] = None
 
+
 @dataclass
 class DetectionResult:
     """Result of poison detection"""
+
     is_poisoned: bool
     poison_types: List[PoisonType]
     confidence: float
@@ -53,9 +63,10 @@ class DetectionResult:
     remediation: List[str]
     metadata: Dict[str, Any]
 
+
 class PoisonDetector:
     """Detector for data poisoning attempts"""
-    
+
     def __init__(self, security_logger: Optional[SecurityLogger] = None):
         self.security_logger = security_logger
         self.patterns = self._initialize_patterns()
@@ -71,11 +82,11 @@ class PoisonDetector:
                 indicators=[
                     "label_distribution_shift",
                     "confidence_mismatch",
-                    "semantic_inconsistency"
+                    "semantic_inconsistency",
                 ],
                 severity=8,
                 detection_method="statistical_analysis",
-                threshold=0.8
+                threshold=0.8,
             ),
             "backdoor": PoisonPattern(
                 name="Backdoor Attack",
@@ -83,11 +94,11 @@ class PoisonDetector:
                 indicators=[
                     "trigger_pattern",
                     "activation_anomaly",
-                    "consistent_misclassification"
+                    "consistent_misclassification",
                 ],
                 severity=9,
                 detection_method="pattern_matching",
-                threshold=0.85
+                threshold=0.85,
             ),
             "clean_label": PoisonPattern(
                 name="Clean Label Attack",
@@ -95,11 +106,11 @@ class PoisonDetector:
                 indicators=[
                     "feature_manipulation",
                     "embedding_shift",
-                    "boundary_distortion"
+                    "boundary_distortion",
                 ],
                 severity=7,
                 detection_method="embedding_analysis",
-                threshold=0.75
+                threshold=0.75,
             ),
             "manipulation": PoisonPattern(
                 name="Data Manipulation",
@@ -107,29 +118,25 @@ class PoisonDetector:
                 indicators=[
                     "statistical_anomaly",
                     "distribution_shift",
-                    "outlier_pattern"
+                    "outlier_pattern",
                 ],
                 severity=8,
                 detection_method="distribution_analysis",
-                threshold=0.8
+                threshold=0.8,
             ),
             "trigger": PoisonPattern(
                 name="Trigger Injection",
                 description="Detection of injected trigger patterns",
-                indicators=[
-                    "visual_pattern",
-                    "text_pattern",
-                    "feature_pattern"
-                ],
+                indicators=["visual_pattern", "text_pattern", "feature_pattern"],
                 severity=9,
                 detection_method="pattern_recognition",
-                threshold=0.9
-            )
+                threshold=0.9,
+            ),
         }
 
-    def detect_poison(self, 
-                     data_points: List[DataPoint],
-                     context: Optional[Dict[str, Any]] = None) -> DetectionResult:
+    def detect_poison(
+        self, data_points: List[DataPoint], context: Optional[Dict[str, Any]] = None
+    ) -> DetectionResult:
         """Detect poisoning in a dataset"""
         try:
             poison_types = []
@@ -165,7 +172,8 @@ class PoisonDetector:
             # Calculate overall confidence
             overall_confidence = (
                 sum(confidence_scores) / len(confidence_scores)
-                if confidence_scores else 0.0
+                if confidence_scores
+                else 0.0
             )
 
             result = DetectionResult(
@@ -179,8 +187,8 @@ class PoisonDetector:
                     "timestamp": datetime.utcnow().isoformat(),
                     "data_points": len(data_points),
                     "affected_percentage": len(affected_indices) / len(data_points),
-                    "context": context or {}
-                }
+                    "context": context or {},
+                },
             )
 
             if result.is_poisoned and self.security_logger:
@@ -188,7 +196,7 @@ class PoisonDetector:
                     "poison_detected",
                     poison_types=[pt.value for pt in poison_types],
                     confidence=overall_confidence,
-                    affected_count=len(affected_indices)
+                    affected_count=len(affected_indices),
                 )
 
             self.detection_history.append(result)
@@ -197,44 +205,43 @@ class PoisonDetector:
         except Exception as e:
             if self.security_logger:
                 self.security_logger.log_security_event(
-                    "poison_detection_error",
-                    error=str(e)
+                    "poison_detection_error", error=str(e)
                 )
             raise SecurityError(f"Poison detection failed: {str(e)}")
 
-    def _statistical_analysis(self, 
-                            data_points: List[DataPoint],
-                            pattern: PoisonPattern) -> DetectionResult:
+    def _statistical_analysis(
+        self, data_points: List[DataPoint], pattern: PoisonPattern
+    ) -> DetectionResult:
         """Perform statistical analysis for poisoning detection"""
         analysis = {}
         affected_indices = []
-        
+
         if any(dp.label is not None for dp in data_points):
             # Analyze label distribution
             label_dist = defaultdict(int)
             for dp in data_points:
                 if dp.label:
                     label_dist[dp.label] += 1
-            
+
             # Check for anomalous distributions
             total = len(data_points)
             expected_freq = total / len(label_dist)
             anomalous_labels = []
-            
+
             for label, count in label_dist.items():
                 if abs(count - expected_freq) > expected_freq * 0.5:  # 50% threshold
                     anomalous_labels.append(label)
-            
+
             # Find affected indices
             for i, dp in enumerate(data_points):
                 if dp.label in anomalous_labels:
                     affected_indices.append(i)
-            
+
             analysis["label_distribution"] = dict(label_dist)
             analysis["anomalous_labels"] = anomalous_labels
-            
+
         confidence = len(affected_indices) / len(data_points) if affected_indices else 0
-        
+
         return DetectionResult(
             is_poisoned=confidence >= pattern.threshold,
             poison_types=[PoisonType.LABEL_FLIPPING],
@@ -242,32 +249,30 @@ class PoisonDetector:
             affected_indices=affected_indices,
             analysis=analysis,
             remediation=["Review and correct anomalous labels"],
-            metadata={"method": "statistical_analysis"}
+            metadata={"method": "statistical_analysis"},
         )
 
-    def _pattern_matching(self, 
-                         data_points: List[DataPoint],
-                         pattern: PoisonPattern) -> DetectionResult:
+    def _pattern_matching(
+        self, data_points: List[DataPoint], pattern: PoisonPattern
+    ) -> DetectionResult:
         """Perform pattern matching for backdoor detection"""
         analysis = {}
         affected_indices = []
         trigger_patterns = set()
-        
+
         # Look for consistent patterns in content
         for i, dp in enumerate(data_points):
             content_str = str(dp.content)
             # Check for suspicious patterns
             if self._contains_trigger_pattern(content_str):
                 affected_indices.append(i)
-                trigger_patterns.update(
-                    self._extract_trigger_patterns(content_str)
-                )
-        
+                trigger_patterns.update(self._extract_trigger_patterns(content_str))
+
         confidence = len(affected_indices) / len(data_points) if affected_indices else 0
-        
+
         analysis["trigger_patterns"] = list(trigger_patterns)
         analysis["pattern_frequency"] = len(affected_indices)
-        
+
         return DetectionResult(
             is_poisoned=confidence >= pattern.threshold,
             poison_types=[PoisonType.BACKDOOR],
@@ -275,22 +280,19 @@ class PoisonDetector:
             affected_indices=affected_indices,
             analysis=analysis,
             remediation=["Remove detected trigger patterns"],
-            metadata={"method": "pattern_matching"}
+            metadata={"method": "pattern_matching"},
         )
 
-    def _embedding_analysis(self, 
-                          data_points: List[DataPoint],
-                          pattern: PoisonPattern) -> DetectionResult:
+    def _embedding_analysis(
+        self, data_points: List[DataPoint], pattern: PoisonPattern
+    ) -> DetectionResult:
         """Analyze embeddings for poisoning detection"""
         analysis = {}
         affected_indices = []
-        
+
         # Collect embeddings
-        embeddings = [
-            dp.embedding for dp in data_points 
-            if dp.embedding is not None
-        ]
-        
+        embeddings = [dp.embedding for dp in data_points if dp.embedding is not None]
+
         if embeddings:
             embeddings = np.array(embeddings)
             # Calculate centroid
@@ -299,19 +301,19 @@ class PoisonDetector:
             distances = np.linalg.norm(embeddings - centroid, axis=1)
             # Find outliers
             threshold = np.mean(distances) + 2 * np.std(distances)
-            
+
             for i, dist in enumerate(distances):
                 if dist > threshold:
                     affected_indices.append(i)
-            
+
             analysis["distance_stats"] = {
                 "mean": float(np.mean(distances)),
                 "std": float(np.std(distances)),
-                "threshold": float(threshold)
+                "threshold": float(threshold),
             }
-        
+
         confidence = len(affected_indices) / len(data_points) if affected_indices else 0
-        
+
         return DetectionResult(
             is_poisoned=confidence >= pattern.threshold,
             poison_types=[PoisonType.CLEAN_LABEL],
@@ -319,42 +321,41 @@ class PoisonDetector:
             affected_indices=affected_indices,
             analysis=analysis,
             remediation=["Review outlier embeddings"],
-            metadata={"method": "embedding_analysis"}
+            metadata={"method": "embedding_analysis"},
         )
 
-    def _distribution_analysis(self, 
-                             data_points: List[DataPoint],
-                             pattern: PoisonPattern) -> DetectionResult:
+    def _distribution_analysis(
+        self, data_points: List[DataPoint], pattern: PoisonPattern
+    ) -> DetectionResult:
         """Analyze data distribution for manipulation detection"""
         analysis = {}
         affected_indices = []
-        
+
         if any(dp.embedding is not None for dp in data_points):
             # Analyze feature distribution
-            embeddings = np.array([
-                dp.embedding for dp in data_points 
-                if dp.embedding is not None
-            ])
-            
+            embeddings = np.array(
+                [dp.embedding for dp in data_points if dp.embedding is not None]
+            )
+
             # Calculate distribution statistics
             mean_vec = np.mean(embeddings, axis=0)
             std_vec = np.std(embeddings, axis=0)
-            
+
             # Check for anomalies in feature distribution
             z_scores = np.abs((embeddings - mean_vec) / std_vec)
             anomaly_threshold = 3  # 3 standard deviations
-            
+
             for i, z_score in enumerate(z_scores):
                 if np.any(z_score > anomaly_threshold):
                     affected_indices.append(i)
-            
+
             analysis["distribution_stats"] = {
                 "feature_means": mean_vec.tolist(),
-                "feature_stds": std_vec.tolist()
+                "feature_stds": std_vec.tolist(),
             }
-        
+
         confidence = len(affected_indices) / len(data_points) if affected_indices else 0
-        
+
         return DetectionResult(
             is_poisoned=confidence >= pattern.threshold,
             poison_types=[PoisonType.DATA_MANIPULATION],
@@ -362,28 +363,28 @@ class PoisonDetector:
             affected_indices=affected_indices,
             analysis=analysis,
             remediation=["Review anomalous feature distributions"],
-            metadata={"method": "distribution_analysis"}
+            metadata={"method": "distribution_analysis"},
         )
 
-    def _pattern_recognition(self, 
-                           data_points: List[DataPoint],
-                           pattern: PoisonPattern) -> DetectionResult:
+    def _pattern_recognition(
+        self, data_points: List[DataPoint], pattern: PoisonPattern
+    ) -> DetectionResult:
         """Recognize trigger patterns in data"""
         analysis = {}
         affected_indices = []
         detected_patterns = defaultdict(int)
-        
+
         for i, dp in enumerate(data_points):
             patterns = self._detect_trigger_patterns(dp)
             if patterns:
                 affected_indices.append(i)
                 for p in patterns:
                     detected_patterns[p] += 1
-        
+
         confidence = len(affected_indices) / len(data_points) if affected_indices else 0
-        
+
         analysis["detected_patterns"] = dict(detected_patterns)
-        
+
         return DetectionResult(
             is_poisoned=confidence >= pattern.threshold,
             poison_types=[PoisonType.TRIGGER_INJECTION],
@@ -391,7 +392,7 @@ class PoisonDetector:
             affected_indices=affected_indices,
             analysis=analysis,
             remediation=["Remove detected trigger patterns"],
-            metadata={"method": "pattern_recognition"}
+            metadata={"method": "pattern_recognition"},
         )
 
     def _contains_trigger_pattern(self, content: str) -> bool:
@@ -400,7 +401,7 @@ class PoisonDetector:
             r"hidden_trigger_",
             r"backdoor_pattern_",
             r"malicious_tag_",
-            r"poison_marker_"
+            r"poison_marker_",
         ]
         return any(re.search(pattern, content) for pattern in trigger_patterns)
 
@@ -421,58 +422,72 @@ class PoisonDetector:
             "backdoor": PoisonType.BACKDOOR,
             "clean_label": PoisonType.CLEAN_LABEL,
             "manipulation": PoisonType.DATA_MANIPULATION,
-            "trigger": PoisonType.TRIGGER_INJECTION
+            "trigger": PoisonType.TRIGGER_INJECTION,
         }
         return mapping.get(pattern_name, PoisonType.ADVERSARIAL)
 
     def _get_remediation_steps(self, poison_types: List[PoisonType]) -> List[str]:
         """Get remediation steps for detected poison types"""
         remediation_steps = set()
-        
+
         for poison_type in poison_types:
             if poison_type == PoisonType.LABEL_FLIPPING:
-                remediation_steps.update([
-                    "Review and correct suspicious labels",
-                    "Implement label validation",
-                    "Add consistency checks"
-                ])
+                remediation_steps.update(
+                    [
+                        "Review and correct suspicious labels",
+                        "Implement label validation",
+                        "Add consistency checks",
+                    ]
+                )
             elif poison_type == PoisonType.BACKDOOR:
-                remediation_steps.update([
-                    "Remove detected backdoor triggers",
-                    "Implement trigger detection",
-                    "Enhance input validation"
-                ])
+                remediation_steps.update(
+                    [
+                        "Remove detected backdoor triggers",
+                        "Implement trigger detection",
+                        "Enhance input validation",
+                    ]
+                )
             elif poison_type == PoisonType.CLEAN_LABEL:
-                remediation_steps.update([
-                    "Review outlier samples",
-                    "Validate data sources",
-                    "Implement feature verification"
-                ])
+                remediation_steps.update(
+                    [
+                        "Review outlier samples",
+                        "Validate data sources",
+                        "Implement feature verification",
+                    ]
+                )
             elif poison_type == PoisonType.DATA_MANIPULATION:
-                remediation_steps.update([
-                    "Verify data integrity",
-                    "Check data sources",
-                    "Implement data validation"
-                ])
+                remediation_steps.update(
+                    [
+                        "Verify data integrity",
+                        "Check data sources",
+                        "Implement data validation",
+                    ]
+                )
             elif poison_type == PoisonType.TRIGGER_INJECTION:
-                remediation_steps.update([
-                    "Remove injected triggers",
-                    "Enhance pattern detection",
-                    "Implement input sanitization"
-                ])
+                remediation_steps.update(
+                    [
+                        "Remove injected triggers",
+                        "Enhance pattern detection",
+                        "Implement input sanitization",
+                    ]
+                )
             elif poison_type == PoisonType.ADVERSARIAL:
-                remediation_steps.update([
-                    "Review adversarial samples",
-                    "Implement robust validation",
-                    "Enhance security measures"
-                ])
+                remediation_steps.update(
+                    [
+                        "Review adversarial samples",
+                        "Implement robust validation",
+                        "Enhance security measures",
+                    ]
+                )
             elif poison_type == PoisonType.SEMANTIC:
-                remediation_steps.update([
-                    "Validate semantic consistency",
-                    "Review content relationships",
-                    "Implement semantic checks"
-                ])
-        
+                remediation_steps.update(
+                    [
+                        "Validate semantic consistency",
+                        "Review content relationships",
+                        "Implement semantic checks",
+                    ]
+                )
+
         return list(remediation_steps)
 
     def get_detection_stats(self) -> Dict[str, Any]:
@@ -482,36 +497,32 @@ class PoisonDetector:
 
         stats = {
             "total_scans": len(self.detection_history),
-            "poisoned_datasets": sum(1 for r in self.detection_history if r.is_poisoned),
+            "poisoned_datasets": sum(
+                1 for r in self.detection_history if r.is_poisoned
+            ),
             "poison_types": defaultdict(int),
             "confidence_distribution": defaultdict(list),
-            "affected_samples": {
-                "total": 0,
-                "average": 0,
-                "max": 0
-            }
+            "affected_samples": {"total": 0, "average": 0, "max": 0},
         }
 
         for result in self.detection_history:
             if result.is_poisoned:
                 for poison_type in result.poison_types:
                     stats["poison_types"][poison_type.value] += 1
-                
+
                 stats["confidence_distribution"][
                     self._categorize_confidence(result.confidence)
                 ].append(result.confidence)
-                
+
                 affected_count = len(result.affected_indices)
                 stats["affected_samples"]["total"] += affected_count
                 stats["affected_samples"]["max"] = max(
-                    stats["affected_samples"]["max"],
-                    affected_count
+                    stats["affected_samples"]["max"], affected_count
                 )
 
         if stats["poisoned_datasets"]:
             stats["affected_samples"]["average"] = (
-                stats["affected_samples"]["total"] / 
-                stats["poisoned_datasets"]
+                stats["affected_samples"]["total"] / stats["poisoned_datasets"]
             )
 
         return stats
@@ -537,7 +548,7 @@ class PoisonDetector:
                 "triggers": 0,
                 "false_positives": 0,
                 "confidence_avg": 0.0,
-                "affected_samples": 0
+                "affected_samples": 0,
             }
             for name in self.patterns.keys()
         }
@@ -558,7 +569,7 @@ class PoisonDetector:
 
         return {
             "pattern_statistics": pattern_stats,
-            "recommendations": self._generate_pattern_recommendations(pattern_stats)
+            "recommendations": self._generate_pattern_recommendations(pattern_stats),
         }
 
     def _generate_pattern_recommendations(
@@ -569,26 +580,34 @@ class PoisonDetector:
 
         for name, stats in pattern_stats.items():
             if stats["triggers"] == 0:
-                recommendations.append({
-                    "pattern": name,
-                    "type": "unused",
-                    "recommendation": "Consider removing or updating unused pattern",
-                    "priority": "low"
-                })
+                recommendations.append(
+                    {
+                        "pattern": name,
+                        "type": "unused",
+                        "recommendation": "Consider removing or updating unused pattern",
+                        "priority": "low",
+                    }
+                )
             elif stats["confidence_avg"] < 0.5:
-                recommendations.append({
-                    "pattern": name,
-                    "type": "low_confidence",
-                    "recommendation": "Review and adjust pattern threshold",
-                    "priority": "high"
-                })
-            elif stats["false_positives"] > stats["triggers"] * 0.2:  # 20% false positive rate
-                recommendations.append({
-                    "pattern": name,
-                    "type": "false_positives",
-                    "recommendation": "Refine pattern to reduce false positives",
-                    "priority": "medium"
-                })
+                recommendations.append(
+                    {
+                        "pattern": name,
+                        "type": "low_confidence",
+                        "recommendation": "Review and adjust pattern threshold",
+                        "priority": "high",
+                    }
+                )
+            elif (
+                stats["false_positives"] > stats["triggers"] * 0.2
+            ):  # 20% false positive rate
+                recommendations.append(
+                    {
+                        "pattern": name,
+                        "type": "false_positives",
+                        "recommendation": "Refine pattern to reduce false positives",
+                        "priority": "medium",
+                    }
+                )
 
         return recommendations
 
@@ -602,7 +621,9 @@ class PoisonDetector:
             "summary": {
                 "total_scans": stats.get("total_scans", 0),
                 "poisoned_datasets": stats.get("poisoned_datasets", 0),
-                "total_affected_samples": stats.get("affected_samples", {}).get("total", 0)
+                "total_affected_samples": stats.get("affected_samples", {}).get(
+                    "total", 0
+                ),
             },
             "poison_types": dict(stats.get("poison_types", {})),
             "pattern_effectiveness": pattern_analysis.get("pattern_statistics", {}),
@@ -610,10 +631,10 @@ class PoisonDetector:
             "confidence_metrics": {
                 level: {
                     "count": len(scores),
-                    "average": sum(scores) / len(scores) if scores else 0
+                    "average": sum(scores) / len(scores) if scores else 0,
                 }
                 for level, scores in stats.get("confidence_distribution", {}).items()
-            }
+            },
         }
 
     def add_pattern(self, pattern: PoisonPattern):
@@ -636,9 +657,9 @@ class PoisonDetector:
         """Clear detection history"""
         self.detection_history.clear()
 
-    def validate_dataset(self, 
-                        data_points: List[DataPoint],
-                        context: Optional[Dict[str, Any]] = None) -> bool:
+    def validate_dataset(
+        self, data_points: List[DataPoint], context: Optional[Dict[str, Any]] = None
+    ) -> bool:
         """Validate entire dataset for poisoning"""
         result = self.detect_poison(data_points, context)
         return not result.is_poisoned

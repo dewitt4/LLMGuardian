@@ -1,0 +1,13 @@
+# LLMGuardian Requirements for HuggingFace Space
+# Note: For local development, see requirements/base.txt and other requirement files
+
+# Gradio for the web interface
+gradio>=4.44.0
+
+# Core minimal dependencies for demo
+pyyaml>=6.0.1
+requests>=2.31.0
+typing-extensions>=4.5.0
+
+# Note: Full installation requires running: pip install -e .
+# This file contains minimal dependencies for the HuggingFace Space demo only

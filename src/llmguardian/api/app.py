@@ -1,13 +1,14 @@
 # src/llmguardian/api/app.py
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+
 from .routes import router
 from .security import SecurityMiddleware
 
 app = FastAPI(
     title="LLMGuardian API",
     description="Security API for LLM applications",
-    version="1.0.0"
+    version="1.0.0",
 )
 
 # Security middleware

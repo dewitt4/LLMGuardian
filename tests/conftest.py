@@ -2,18 +2,22 @@
 tests/conftest.py - Pytest configuration and shared fixtures
 """
 
-import pytest
-import os
 import json
+import os
 from pathlib import Path
-from typing import Dict, Any
-from llmguardian.core.logger import SecurityLogger
+from typing import Any, Dict
+
+import pytest
+
 from llmguardian.core.config import Config
+from llmguardian.core.logger import SecurityLogger
+
 
 @pytest.fixture(scope="session")
 def test_data_dir() -> Path:
     """Get test data directory"""
     return Path(__file__).parent / "data"
+
 
 @pytest.fixture(scope="session")
 def test_config() -> Dict[str, Any]:
@@ -22,20 +26,24 @@ def test_config() -> Dict[str, Any]:
     with open(config_path) as f:
         return json.load(f)
 
+
 @pytest.fixture
 def security_logger():
     """Create a security logger for testing"""
     return SecurityLogger(log_path=str(Path(__file__).parent / "logs"))
+
 
 @pytest.fixture
 def config(test_config):
     """Create a configuration instance for testing"""
     return Config(config_data=test_config)
 
+
 @pytest.fixture
 def temp_dir(tmpdir):
     """Create a temporary directory for test files"""
     return Path(tmpdir)
+
 
 @pytest.fixture
 def sample_text_data():
@@ -54,8 +62,9 @@ def sample_text_data():
             Credit Card: 4111-1111-1111-1111
             Medical ID: PHI123456
             Password: secret123
-        """
+        """,
     }
+
 
 @pytest.fixture
 def sample_vectors():
@@ -63,8 +72,9 @@ def sample_vectors():
     return {
         "clean": [0.1, 0.2, 0.3],
         "suspicious": [0.9, 0.8, 0.7],
-        "anomalous": [10.0, -10.0, 5.0]
+        "anomalous": [10.0, -10.0, 5.0],
     }
+
 
 @pytest.fixture
 def test_rules():
@@ -75,16 +85,17 @@ def test_rules():
             "category": "PII",
             "level": "CONFIDENTIAL",
             "patterns": [r"\b\w+@\w+\.\w+\b"],
-            "actions": ["mask"]
+            "actions": ["mask"],
         },
         "test_rule_2": {
             "name": "Test Rule 2",
             "category": "PHI",
             "level": "RESTRICTED",
             "patterns": [r"medical.*\d+"],
-            "actions": ["block", "alert"]
-        }
+            "actions": ["block", "alert"],
+        },
     }
+
 
 @pytest.fixture(autouse=True)
 def setup_teardown():
@@ -92,12 +103,13 @@ def setup_teardown():
     # Setup
     test_log_dir = Path(__file__).parent / "logs"
     test_log_dir.mkdir(exist_ok=True)
-    
+
     yield
-    
+
     # Teardown
     for f in test_log_dir.glob("*.log"):
         f.unlink()
+
 
 @pytest.fixture
 def mock_security_logger(mocker):

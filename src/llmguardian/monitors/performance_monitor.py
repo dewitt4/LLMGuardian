@@ -2,15 +2,17 @@
 monitors/performance_monitor.py - LLM performance monitoring
 """
 
-import time
 import threading
-from typing import Dict, List, Optional, Any
+import time
+from collections import deque
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 from statistics import mean, median, stdev
-from collections import deque
-from ..core.logger import SecurityLogger
+from typing import Any, Dict, List, Optional
+
 from ..core.exceptions import MonitoringError
+from ..core.logger import SecurityLogger
+
 
 @dataclass
 class PerformanceMetric:
@@ -19,6 +21,7 @@ class PerformanceMetric:
     timestamp: datetime
     context: Optional[Dict[str, Any]] = None
 
+
 @dataclass
 class MetricThreshold:
     warning: float
@@ -26,13 +29,13 @@ class MetricThreshold:
     window_size: int  # number of samples
     calculation: str  # "average", "median", "percentile"
 
+
 class PerformanceMonitor:
-    def __init__(self, security_logger: Optional[SecurityLogger] = None,
-                 max_history: int = 1000):
+    def __init__(
+        self, security_logger: Optional[SecurityLogger] = None, max_history: int = 1000
+    ):
         self.security_logger = security_logger
-        self.metrics: Dict[str, deque] = defaultdict(
-            lambda: deque(maxlen=max_history)
-        )
+        self.metrics: Dict[str, deque] = defaultdict(lambda: deque(maxlen=max_history))
         self.thresholds = self._initialize_thresholds()
         self._lock = threading.Lock()
 
@@ -42,36 +45,31 @@ class PerformanceMonitor:
                 warning=1.0,  # seconds
                 critical=5.0,
                 window_size=100,
-                calculation="average"
+                calculation="average",
             ),
             "token_usage": MetricThreshold(
-                warning=1000,
-                critical=2000,
-                window_size=50,
-                calculation="median"
+                warning=1000, critical=2000, window_size=50, calculation="median"
             ),
             "error_rate": MetricThreshold(
                 warning=0.05,  # 5%
                 critical=0.10,
                 window_size=200,
-                calculation="average"
+                calculation="average",
             ),
             "memory_usage": MetricThreshold(
                 warning=80.0,  # percentage
                 critical=90.0,
                 window_size=20,
-                calculation="average"
-            )
+                calculation="average",
+            ),
         }
 
-    def record_metric(self, name: str, value: float, 
-                     context: Optional[Dict[str, Any]] = None):
+    def record_metric(
+        self, name: str, value: float, context: Optional[Dict[str, Any]] = None
+    ):
         try:
             metric = PerformanceMetric(
-                name=name,
-                value=value,
-                timestamp=datetime.utcnow(),
-                context=context
+                name=name, value=value, timestamp=datetime.utcnow(), context=context
             )
 
             with self._lock:
@@ -84,7 +82,7 @@ class PerformanceMonitor:
                     "performance_monitoring_error",
                     error=str(e),
                     metric_name=name,
-                    metric_value=value
+                    metric_value=value,
                 )
             raise MonitoringError(f"Failed to record metric: {str(e)}")
 
@@ -93,13 +91,13 @@ class PerformanceMonitor:
             return
 
         threshold = self.thresholds[metric_name]
-        recent_metrics = list(self.metrics[metric_name])[-threshold.window_size:]
-        
+        recent_metrics = list(self.metrics[metric_name])[-threshold.window_size :]
+
         if not recent_metrics:
             return
 
         values = [m.value for m in recent_metrics]
-        
+
         if threshold.calculation == "average":
             current_value = mean(values)
         elif threshold.calculation == "median":
@@ -121,16 +119,16 @@ class PerformanceMonitor:
                 current_value=current_value,
                 threshold_level=level,
                 threshold_value=(
-                    threshold.critical if level == "critical" 
-                    else threshold.warning
-                )
+                    threshold.critical if level == "critical" else threshold.warning
+                ),
             )
 
-    def get_metrics(self, metric_name: str, 
-                   window: Optional[timedelta] = None) -> List[Dict[str, Any]]:
+    def get_metrics(
+        self, metric_name: str, window: Optional[timedelta] = None
+    ) -> List[Dict[str, Any]]:
         with self._lock:
             metrics = list(self.metrics[metric_name])
-            
+
             if window:
                 cutoff = datetime.utcnow() - window
                 metrics = [m for m in metrics if m.timestamp >= cutoff]
@@ -139,25 +137,26 @@ class PerformanceMonitor:
                 {
                     "value": m.value,
                     "timestamp": m.timestamp.isoformat(),
-                    "context": m.context
+                    "context": m.context,
                 }
                 for m in metrics
             ]
 
-    def get_statistics(self, metric_name: str, 
-                      window: Optional[timedelta] = None) -> Dict[str, float]:
+    def get_statistics(
+        self, metric_name: str, window: Optional[timedelta] = None
+    ) -> Dict[str, float]:
         with self._lock:
             metrics = self.get_metrics(metric_name, window)
             if not metrics:
                 return {}
 
             values = [m["value"] for m in metrics]
-            
+
             stats = {
                 "min": min(values),
                 "max": max(values),
                 "average": mean(values),
-                "median": median(values)
+                "median": median(values),
             }
 
             if len(values) > 1:
@@ -184,20 +183,24 @@ class PerformanceMonitor:
                 continue
 
             if stats["average"] >= threshold.critical:
-                alerts.append({
-                    "metric_name": name,
-                    "level": "critical",
-                    "value": stats["average"],
-                    "threshold": threshold.critical,
-                    "timestamp": datetime.utcnow().isoformat()
-                })
+                alerts.append(
+                    {
+                        "metric_name": name,
+                        "level": "critical",
+                        "value": stats["average"],
+                        "threshold": threshold.critical,
+                        "timestamp": datetime.utcnow().isoformat(),
+                    }
+                )
             elif stats["average"] >= threshold.warning:
-                alerts.append({
-                    "metric_name": name,
-                    "level": "warning",
-                    "value": stats["average"],
-                    "threshold": threshold.warning,
-                    "timestamp": datetime.utcnow().isoformat()
-                })
+                alerts.append(
+                    {
+                        "metric_name": name,
+                        "level": "warning",
+                        "value": stats["average"],
+                        "threshold": threshold.warning,
+                        "timestamp": datetime.utcnow().isoformat(),
+                    }
+                )
 
         return alerts

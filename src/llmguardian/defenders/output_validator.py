@@ -3,10 +3,12 @@ defenders/output_validator.py - Output validation and sanitization
 """
 
 import re
-from typing import Dict, List, Optional, Set, Any
 from dataclasses import dataclass
-from ..core.logger import SecurityLogger
+from typing import Any, Dict, List, Optional, Set
+
 from ..core.exceptions import ValidationError
+from ..core.logger import SecurityLogger
+
 
 @dataclass
 class ValidationRule:
@@ -17,6 +19,7 @@ class ValidationRule:
     sanitize: bool = True
     replacement: str = ""
 
+
 @dataclass
 class ValidationResult:
     is_valid: bool
@@ -24,6 +27,7 @@ class ValidationResult:
     sanitized_output: Optional[str]
     risk_score: int
     details: Dict[str, Any]
+
 
 class OutputValidator:
     def __init__(self, security_logger: Optional[SecurityLogger] = None):
@@ -41,38 +45,38 @@ class OutputValidator:
                 pattern=r"(?:SELECT|INSERT|UPDATE|DELETE)\s+(?:FROM|INTO)\s+\w+",
                 description="SQL query in output",
                 severity=9,
-                block=True
+                block=True,
             ),
             "code_injection": ValidationRule(
                 pattern=r"<script.*?>.*?</script>",
                 description="JavaScript code in output",
                 severity=8,
-                block=True
+                block=True,
             ),
             "system_info": ValidationRule(
                 pattern=r"(?:system|config|env|secret)(?:_|\s+)?(?:key|token|password)",
                 description="System information leak",
                 severity=9,
-                block=True
+                block=True,
             ),
             "personal_data": ValidationRule(
                 pattern=r"\b\d{3}-\d{2}-\d{4}\b|\b\d{16}\b",
                 description="Personal data (SSN/CC)",
                 severity=10,
-                block=True
+                block=True,
             ),
             "file_paths": ValidationRule(
                 pattern=r"(?:/[\w./]+)|(?:C:\\[\w\\]+)",
                 description="File system paths",
                 severity=7,
-                block=True
+                block=True,
             ),
             "html_content": ValidationRule(
                 pattern=r"<(?!br|p|b|i|em|strong)[^>]+>",
                 description="HTML content",
                 severity=6,
                 sanitize=True,
-                replacement=""
+                replacement="",
             ),
         }
 
@@ -86,7 +90,9 @@ class OutputValidator:
             r"\b[A-Z0-9]{20,}\b",  # Long alphanumeric strings
         }
 
-    def validate(self, output: str, context: Optional[Dict[str, Any]] = None) -> ValidationResult:
+    def validate(
+        self, output: str, context: Optional[Dict[str, Any]] = None
+    ) -> ValidationResult:
         try:
             violations = []
             risk_score = 0
@@ -97,14 +103,14 @@ class OutputValidator:
             for name, rule in self.rules.items():
                 pattern = self.compiled_rules[name]
                 matches = pattern.findall(sanitized)
-                
+
                 if matches:
                     violations.append(f"{name}: {rule.description}")
                     risk_score = max(risk_score, rule.severity)
-                    
+
                     if rule.block:
                         is_valid = False
-                    
+
                     if rule.sanitize:
                         sanitized = pattern.sub(rule.replacement, sanitized)
 
@@ -126,8 +132,8 @@ class OutputValidator:
                     "original_length": len(output),
                     "sanitized_length": len(sanitized),
                     "violation_count": len(violations),
-                    "context": context or {}
-                }
+                    "context": context or {},
+                },
             )
 
             if violations and self.security_logger:
@@ -135,7 +141,7 @@ class OutputValidator:
                     "output_validation",
                     violations=violations,
                     risk_score=risk_score,
-                    is_valid=is_valid
+                    is_valid=is_valid,
                 )
 
             return result
@@ -143,15 +149,15 @@ class OutputValidator:
         except Exception as e:
             if self.security_logger:
                 self.security_logger.log_security_event(
-                    "validation_error",
-                    error=str(e),
-                    output_length=len(output)
+                    "validation_error", error=str(e), output_length=len(output)
                 )
             raise ValidationError(f"Output validation failed: {str(e)}")
 
     def add_rule(self, name: str, rule: ValidationRule) -> None:
         self.rules[name] = rule
-        self.compiled_rules[name] = re.compile(rule.pattern, re.IGNORECASE | re.MULTILINE)
+        self.compiled_rules[name] = re.compile(
+            rule.pattern, re.IGNORECASE | re.MULTILINE
+        )
 
     def remove_rule(self, name: str) -> None:
         self.rules.pop(name, None)
@@ -167,7 +173,7 @@ class OutputValidator:
                 "description": rule.description,
                 "severity": rule.severity,
                 "block": rule.block,
-                "sanitize": rule.sanitize
+                "sanitize": rule.sanitize,
             }
             for name, rule in self.rules.items()
         }
