@@ -19,7 +19,15 @@ license: apache-2.0
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-Comprehensive LLM AI Model protection toolset aligned to addressing OWASP vulnerabilities in Large Language Models
+Comprehensive LLM AI Model protection toolset aligned to addressing OWASP vulnerabilities in Large Language Models.
+
+ LLMGuardian is a cybersecurity toolset designed to protect production Generative AI applications by addressing the OWASP LLM Top 10 vulnerabilities. This toolset offers comprehensive features like Prompt Injection Detection, Data Leakage Prevention, and a Streamlit Interactive Dashboard for monitoring threats. The OWASP Top 10 for LLM Applications 2025 comprehensively lists and explains the ten most critical security risks specific to LLMs, such as Prompt Injection, Sensitive Information Disclosure, Supply Chain vulnerabilities, and Excessive Agency.
+
+## 🎥 Demo Video
+
+Watch the LLMGuardian demonstration and walkthrough:
+
+[![LLMGuardian Demo](https://img.shields.io/badge/YouTube-Demo%20Video-red?style=for-the-badge&logo=youtube)](https://youtu.be/vzMJXuoS-ko?si=umzS-6eqKl8mMtY_)
 
 **Author:** [DeWitt Gibson](https://www.linkedin.com/in/dewitt-gibson/)
 

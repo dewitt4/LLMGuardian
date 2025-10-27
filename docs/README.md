@@ -1,5 +1,51 @@
 # LLM Guardian Documentation
 
+## Overview
+
+LLMGuardian is a comprehensive security framework designed to protect Large Language Model (LLM) applications from the top security risks outlined in the OWASP Top 10 for LLM Applications. Watch our introduction video to learn more:
+
+[![LLMGuardian Introduction](https://img.youtube.com/vi/ERy37m5_kuk/0.jpg)](https://youtu.be/ERy37m5_kuk?si=mkKEy01Z4__qvxlr)
+
+## Key Features
+
+- **Real-time Threat Detection**: Advanced pattern recognition for prompt injection, jailbreaking, and malicious inputs
+- **Privacy Protection**: Comprehensive PII detection and data sanitization
+- **Vector Security**: Embedding validation and RAG operation protection
+- **Agency Control**: Permission management and action validation for LLM operations
+- **Comprehensive Monitoring**: Usage tracking, behavior analysis, and audit logging
+- **Multi-layered Defense**: Input sanitization, output validation, and content filtering
+- **Enterprise Ready**: Scalable architecture with cloud deployment support
+
+## Architecture
+
+LLMGuardian follows a modular architecture with the following core packages:
+
+- **Core**: Configuration management, security services, rate limiting, and logging
+- **Defenders**: Input sanitization, output validation, content filtering, and token validation
+- **Monitors**: Usage monitoring, behavior analysis, threat detection, and audit logging  
+- **Vectors**: Embedding validation, vector scanning, RAG protection, and storage security
+- **Agency**: Permission management, action validation, and scope limitation
+- **Dashboard**: Web-based monitoring and control interface
+- **CLI**: Command-line interface for security operations
+
+## Quick Start
+
+```bash
+# Install LLMGuardian
+pip install llmguardian
+
+# Basic usage
+from llmguardian import LLMGuardian
+
+guardian = LLMGuardian()
+result = guardian.scan_prompt("Your prompt here")
+
+if result.is_safe:
+    print("Prompt is safe to process")
+else:
+    print(f"Security risks detected: {result.risks}")
+```
+
 # Command Line Interface
 
 **cli_interface.py**
