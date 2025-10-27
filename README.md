@@ -12,9 +12,9 @@ license: apache-2.0
 
 # LLMGuardian
 
-[![CI](https://github.com/dewitt4/LLMGuardian/actions/workflows/ci.yml/badge.svg)](https://github.com/dewitt4/LLMGuardian/actions/workflows/ci.yml)
-[![Security Scan](https://github.com/dewitt4/LLMGuardian/actions/workflows/security-scan.yml/badge.svg)](https://github.com/dewitt4/LLMGuardian/actions/workflows/security-scan.yml)
-[![Docker Build](https://github.com/dewitt4/LLMGuardian/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/dewitt4/LLMGuardian/actions/workflows/docker-publish.yml)
+[![CI](https://github.com/dewitt4/llmguardian/actions/workflows/ci.yml/badge.svg)](https://github.com/dewitt4/llmguardian/actions/workflows/ci.yml)
+[![Security Scan](https://github.com/dewitt4/llmguardian/actions/workflows/security-scan.yml/badge.svg)](https://github.com/dewitt4/llmguardian/actions/workflows/security-scan.yml)
+[![Docker Build](https://github.com/dewitt4/llmguardian/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/dewitt4/llmguardian/actions/workflows/docker-publish.yml)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
@@ -475,8 +475,8 @@ See [.github/workflows/README.md](.github/workflows/README.md) for detailed docu
 ### From Source
 
 ```bash
-git clone https://github.com/dewitt4/LLMGuardian.git
-cd LLMGuardian
+git clone https://github.com/dewitt4/llmguardian.git
+cd llmguardian
 pip install -e .
 ```
 
@@ -565,8 +565,8 @@ To start working with this structure:
 
 1. **Fork the repository**
    ```bash
-   git clone https://github.com/dewitt4/LLMGuardian.git
-   cd LLMGuardian
+   git clone https://github.com/dewitt4/llmguardian.git
+   cd llmguardian
    ```
 
 2. **Create and activate a virtual environment**
@@ -619,13 +619,13 @@ The HuggingFace Space is automatically synced from the main branch via GitHub Ac
 
 Monitor the health of the project:
 
-- **[CI Pipeline](https://github.com/dewitt4/LLMGuardian/actions/workflows/ci.yml)**: Continuous integration status
-- **[Security Scans](https://github.com/dewitt4/LLMGuardian/actions/workflows/security-scan.yml)**: Latest security scan results
-- **[Docker Builds](https://github.com/dewitt4/LLMGuardian/actions/workflows/docker-publish.yml)**: Container build status
+- **[CI Pipeline](https://github.com/dewitt4/llmguardian/actions/workflows/ci.yml)**: Continuous integration status
+- **[Security Scans](https://github.com/dewitt4/llmguardian/actions/workflows/security-scan.yml)**: Latest security scan results
+- **[Docker Builds](https://github.com/dewitt4/llmguardian/actions/workflows/docker-publish.yml)**: Container build status
 
 ### Security Advisories
 
-Check the [Security tab](https://github.com/dewitt4/LLMGuardian/security) for:
+Check the [Security tab](https://github.com/dewitt4/llmguardian/security) for:
 - Vulnerability reports
 - Dependency alerts
 - Security advisories
@@ -651,7 +651,7 @@ If you use LLMGuardian in your research or project, please cite:
       title={LLMGuardian: Comprehensive LLM AI Model Protection}, 
       author={DeWitt Gibson},
       year={2025},
-      url={https://github.com/dewitt4/LLMGuardian}, 
+      url={https://github.com/dewitt4/llmguardian}, 
 }
 ```
 

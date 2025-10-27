@@ -68,11 +68,11 @@ setup(
     description="A comprehensive security tool for LLM applications",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/dewitt4/LLMGuardian",
+    url="https://github.com/dewitt4/llmguardian",
     project_urls={
-        "Bug Tracker": "https://github.com/dewitt4/LLMGuardian/issues",
-        "Documentation": "https://github.com/dewitt4/LLMGuardian/wiki",
-        "Source Code": "https://github.com/dewitt4/LLMGuardian",
+        "Bug Tracker": "https://github.com/dewitt4/llmguardian/issues",
+        "Documentation": "https://github.com/dewitt4/llmguardian/wiki",
+        "Source Code": "https://github.com/dewitt4/llmguardian",
     },
     classifiers=[
         "Development Status :: 4 - Beta",
