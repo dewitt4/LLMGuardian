@@ -27,7 +27,7 @@ Comprehensive LLM AI Model protection toolset aligned to addressing OWASP vulner
 
 Watch the LLMGuardian demonstration and walkthrough:
 
-[![LLMGuardian Demo](https://img.shields.io/badge/YouTube-Demo%20Video-red?style=for-the-badge&logo=youtube)](https://youtu.be/vzMJXuoS-ko?si=umzS-6eqKl8mMtY_)
+[![LLMGuardian Demo](https://img.youtube.com/vi/vzMJXuoS-ko/maxresdefault.jpg)](https://youtu.be/vzMJXuoS-ko?si=umzS-6eqKl8mMtY_)
 
 **Author:** [DeWitt Gibson](https://www.linkedin.com/in/dewitt-gibson/)
 
@@ -42,8 +42,8 @@ Watch the LLMGuardian demonstration and walkthrough:
 pip install llmguardian
 
 # Or install from source
-git clone https://github.com/dewitt4/LLMGuardian.git
-cd LLMGuardian
+git clone https://github.com/dewitt4/llmguardian.git
+cd llmguardian
 pip install -e .
 ```
 
